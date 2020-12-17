@@ -1,0 +1,26 @@
+services:
+  - postgresql
+env:
+  global:
+    - PG_DB=your-db-name
+    - PG_HOST=localhost
+    - PG_USER=postgres
+    - PG_PORT=5432
+language: node_js
+node_js:
+  - 12.14.1
+branches:
+  only:
+    - develop
+before_script:
+  - psql -c 'drop database if exists your-db-name;' -U postgres
+  - psql -c 'create database your-db-name;' -U postgres
+install:
+  - npm install
+cache:
+  directories:
+    - node_modules
+script:
+  - npm test
+after_success:
+  - npm run coveralls

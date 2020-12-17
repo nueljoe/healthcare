@@ -1,0 +1,9 @@
+{
+  "exclude": [
+    "src/tests/",
+    "src/database/",
+    "src/seeders/",
+    "src/models",
+    "src/utils"
+  ]
+}

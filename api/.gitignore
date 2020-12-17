@@ -1,0 +1,9 @@
+# node modules
+node_modules/
+
+# test coverage reports
+.nyc_output/
+coverage/
+
+# environment
+.env

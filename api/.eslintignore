@@ -1,0 +1,31 @@
+# Dependencies directory
+node_modules/
+
+# The build directory
+dist/
+
+# Database directory
+database/
+
+# Environment variables
+*.env
+
+# Tests Directory
+src/tests/
+
+# nyc test coverage
+.nyc_output
+
+# Test Coverage directory used by test coverage reporters
+coverage/
+
+# Package-lock.json
+package-lock.json
+
+# seeders
+src/seeders
+src/migrations
+src/models
+
+# database
+src/databases
