@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import moment from 'moment';
 import knex from '../database';
 import { ClientError, NotFoundError, PermissionError } from '../errors';
 import _bcrypt from '../utils/_bcrypt';
@@ -41,7 +42,7 @@ export default {
                     password: encryptedPassword,
                     permission_id: permission.id,
                     confirmation_token: confirmationToken
-                }, ['id', 'email']);            
+                });            
 
             await Promise.all([
                 knex('user_profiles')
@@ -241,6 +242,96 @@ export default {
                 message: 'A verification mail has been sent to you',
             });
         } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
+     * Allow users to request a password when they can not remember their password
+     */
+    async initiatePasswordReset(req, res, next) {
+        const { body } = req;
+
+        try {
+            if (!body.email) {
+                throw new ClientError('Please provide an email address');
+            }
+
+            const user = await knex.first(['id', 'email']).from('users').where('email', body.email);
+
+            if (!user) {
+                throw new NotFoundError('We are unable to identify your account. Please check your email');
+            }
+
+            const tokenPayload = JSON.stringify({ email: user.email, date: new Date().toString() });
+            const token = crypto.
+                            createHmac('sha256', tokenPayload, { encoding: 'utf-8' })
+                            .update('password_token')
+                            .digest('hex');
+
+            await knex('password_tokens')
+                .insert({
+                    user_id: user.id,
+                    token 
+                });
+
+            await mailer.sendPasswordResetLink({
+                email: user.email,
+                password_reset_link: `${env.get('FRONTEND_BASEURL')}/auth/reset-password?token=${token}`
+            });
+
+            res.status(202).json({
+                status: 'success',
+                message: 'A link has been sent to your email'
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
+     * Resets the user password
+     */
+    async resetPassword(req, res, next) {
+        const { body, query } = req;
+        const transaction = await knex.transaction();
+
+        try {
+            if (!query.token) {
+                throw new ClientError('No reset token provided');
+            }
+
+            const passwordTokenObject = await knex.first(['user_id', 'created_at']).from('password_tokens').where('token', query.token);
+
+            console.log(passwordTokenObject);
+
+            if (!passwordTokenObject) {
+                throw new ClientError('Invalid token');
+            }
+
+            
+            if (body.password !== body.confirm_password) {
+                throw new ClientError('Passwords do not match');
+            }
+            
+            const encryptedPassword = await _bcrypt.hash(body.password);
+
+            await knex('users')
+                .where('id', passwordTokenObject.user_id)
+                .transacting(transaction)
+                .update({ password: encryptedPassword });
+
+            await knex('password_tokens').del()
+                .where('user_id', passwordTokenObject.user_id);
+
+            await transaction.commit();
+
+            res.status(202).json({
+                status: 'success',
+                message: 'Password was reset successfully'
+            });
+        } catch (error) {
+            await transaction.rollback(error);
             next(error);
         }
     }
