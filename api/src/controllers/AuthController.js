@@ -18,6 +18,10 @@ export default {
                 throw new ClientError('An account exists with this email');
             }
 
+            if (body.password !== body.confirm_password) {
+                throw new ClientError('Passwords do not match');
+            }
+
             const encryptedPassword = await _bcrypt.hash(body.password);
             const confirmationToken = crypto.createHmac('sha256', JSON.stringify({ email: body.email }), { encoding: 'utf-8' }).update('token').digest('hex');
 
@@ -32,7 +36,7 @@ export default {
                     confirmation_token: confirmationToken
                 }, ['id', 'email']);            
 
-            const [profile, subscriber] = await Promise.all([
+            await Promise.all([
                 knex('user_profiles')
                     .transacting(transaction)
                     .insert({
