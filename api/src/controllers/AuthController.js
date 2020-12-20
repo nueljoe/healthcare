@@ -7,6 +7,9 @@ import mailer from '../utils/mailer';
 import env from '../utils/env';
 
 export default {
+    /**
+     * Creates a new account
+     */
     async createAccount(req, res, next) {
         const { body } = req;
         const transaction = await knex.transaction();
@@ -76,6 +79,51 @@ export default {
     },
 
     /**
+     * Verify an account
+     */
+    async verifyAccount(req, res, next) {
+        const { query: { token } } = req;
+        const genericErrorMsg = 'Invalid token provided.';
+
+        try {
+            if (!token) {
+                throw new ClientError(genericErrorMsg);
+            }
+
+            const user = await knex.first(['id', 'email'])
+                .from('users')
+                .where('confirmation_token', token);
+
+            console.log(user)
+
+            if (!user) {
+                throw new ClientError(genericErrorMsg);
+            }
+
+            await knex('users')
+                .where('id', user.id)
+                .update({
+                    verified_at: new Date(),
+                    confirmation_token: null,
+                    last_logged_in_at: new Date(),
+                });
+            
+            const payload = { id: user.id, email: user.email };
+
+            res.status(200).json({
+                status: 'success',
+                message: 'You have successfully verified your account.',
+                data: {
+                    ...payload,
+                    token: makeToken(payload)
+                }
+                })
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
      * Sign in a user
      */
     async signIn(req, res, next) {
@@ -83,7 +131,7 @@ export default {
         const genericErrorMsg = 'Email or password is incorrect';
 
         try {
-            const user = await knex.first().from('users').where('email', body.email || 1);
+            const user = await knex.first().from('users').where('email', body.email);
 
             if (!user) {
                 throw new ClientError(genericErrorMsg);
