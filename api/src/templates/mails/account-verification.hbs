@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>HealthCare - Account Verification</title>
+        <style>
+            body {
+                max-width: 900px;
+            }
+
+            .account-verification {
+                width: 100%;
+                margin: auto;
+                text-align: center;
+            }
+
+            table {
+                
+            }
+
+            .btn.verification_url {
+                width: 100%;
+                display: block;
+                max-width: 400px;
+                margin: auto;
+            }
+
+            footer {
+                margin-top: 3em;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div>
+            <header>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                              <h1>Thanks for creating an account! Verify your email</h1>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </header>
+
+            <main class="account-verificaition">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h4>Hi, <span class="capitalize">{{first_name}}</span></h4>
+
+                                <p class="text-">Please click the button below to verify your account</p>
+
+                                <br />
+                                <br />
+
+                                <a
+                                    class="block verification_url btn btn--primary btn--lg" 
+                                    rel="noreferrer"
+                                    href={{verification_url}}
+                                    target="_blank"
+                                >Verify Account</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </main>
+
+            <footer>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h1>Welcome to HealthCare!</h1>
+
+                                <p>This mail is intended for <span class="capitalize">{{first_name}} {{last_name}}</span>. Please ignore if it's not you.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </footer>
+        </div>
+    </body>
+</html>
