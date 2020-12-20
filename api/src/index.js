@@ -81,7 +81,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.set('PORT', process.env.PORT || 8051);
+app.set('PORT', process.env.PORT || 8050);
 
 app.listen(app.get('PORT'), () => {
     console.log(`Server is now running at port ${app.get('PORT')}`)
