@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import knex from '../database';
-import { ClientError } from '../errors';
+import { ClientError, NotFoundError, PermissionError } from '../errors';
 import _bcrypt from '../utils/_bcrypt';
 import { makeToken } from '../utils/_jwt';
 import mailer from '../utils/mailer';
@@ -26,7 +26,11 @@ export default {
             }
 
             const encryptedPassword = await _bcrypt.hash(body.password);
-            const confirmationToken = crypto.createHmac('sha256', JSON.stringify({ email: body.email }), { encoding: 'utf-8' }).update('token').digest('hex');
+
+            const tokenPayload = JSON.stringify({ email: body.email, date: new Date().toString() });
+            const confirmationToken = crypto.createHmac('sha256', tokenPayload, { encoding: 'utf-8' })
+                                        .update('token')
+                                        .digest('hex');
 
             const permission = await knex.first('id').from('permissions').where('label', 'member');
 
@@ -189,6 +193,55 @@ export default {
         } catch (error) {
             next(error);
         }
-    }
+    },
 
+    /**
+     * Resends the verification mail
+     */
+    async resendVerification(req, res, next) {
+        const { query: { email } } = req;
+
+        try {
+            if (!email) {
+                throw new ClientError('Please provide an email address');
+            }
+
+            const user = await knex.first(['user.id', 'user.verified_at', 'profile.first_name', 'profile.last_name'])
+                .from('users as user')
+                .where('email', email)
+                .innerJoin('user_profiles as profile', 'user.id', 'profile.user_id');
+
+            if (!user) {
+                throw new NotFoundError('We are unable to identify your account. Please check your email');
+            }
+
+            if (user.verified_at) {
+                throw new PermissionError('Cannot perform this operaion on a verified account');
+            }
+
+            const tokenPayload = JSON.stringify({ email, date: new Date().toString() });
+            const token = crypto.
+                            createHmac('sha256', tokenPayload, { encoding: 'utf-8' })
+                            .update('token')
+                            .digest('hex');
+
+            await knex('users')
+                .where('id', user.id)
+                .update({ confirmation_token: token });
+
+            await mailer.sendAccountVerification({
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email,
+                verification_url: `${env.get('FRONTEND_BASEURL')}/auth/verify?token=${token}`
+            });
+
+            res.status(202).json({
+                status: 'success',
+                message: 'A verification mail has been sent to you',
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 };
