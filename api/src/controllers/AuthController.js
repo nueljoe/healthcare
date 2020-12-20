@@ -156,5 +156,39 @@ export default {
         } catch (error) {
             next(error);
         }
+    },
+
+    /**
+     * Implements the functionality that allows a user to change their password by providing the current
+     * one and a new one
+     */
+    async changePassword(req, res, next) {
+        const { user, body } = req;
+
+        try {
+            const currentPasswordIsValid = await _bcrypt.compare(body.current_password, user.password);
+
+            if (!currentPasswordIsValid) {
+                throw new ClientError('Current password provided is incorrect');
+            }
+
+            if (body.new_password !== body.confirm_password) {
+                throw new ClientError('Passwords do not match');
+            }
+
+            const encryptedPassword = await _bcrypt.hash(body.new_password);
+
+            await knex('users')
+                .where('id', user.id)
+                .update({ password: encryptedPassword });
+
+            res.status(202).json({
+                status: 'success',
+                message: 'Password was updated successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
     }
+
 };
