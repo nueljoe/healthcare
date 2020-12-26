@@ -22,9 +22,10 @@ export default async (req, res, next) => {
         const token = bearerToken.split(' ')[1];
         const payload = decodeToken(token);
 
-        const user = await knex.first(['id', 'email', 'password', 'deactivated_at'])
-            .from('users')
-            .where('id', payload.id);
+        const user = await knex.first(['user.id', 'user.email', 'user.password', 'user.deactivated_at', 'permission.label'])
+            .from('users as user')
+            .where('user.id', payload.id)
+            .innerJoin('permissions as permission', 'user.permission_id', 'permission.id');
 
         if (!user) {
             throw new AuthenticationError(genericErrorMsg);
