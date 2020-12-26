@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
-import SubscriptionValidator from '../../validators/subscriptions';
+import SubscriptionValidator from '../../validators/subscription';
 import SubscriptionController from '../../controllers/SubscriptionController';
 
 const router = Router();
