@@ -21,7 +21,12 @@ const schemaOnUpdate = Joi.object({
     subcategory_id: Joi.number(),
 });
 
+const schemaOnStatusUpdate = Joi.object({
+    is_published: Joi.boolean().required(),
+});
+
 export default {
     validateBodyOnCreate: Validator.validateBody(schemaOnCreate),
     validateBodyOnUpdate: Validator.validateBody(schemaOnUpdate),
+    validateBodyOnStatusUpdate: Validator.validateBody(schemaOnStatusUpdate),
 }

@@ -2,6 +2,7 @@ exports.up = function(knex) {
     return knex.schema.createTable('courses', (table) => {
         table.increments();
         table.string('title').notNullable();
+        table.string('slug').notNullable();
         table.text('description').notNullable();
         table.text('banner').notNullable();
         table.text('tags');
