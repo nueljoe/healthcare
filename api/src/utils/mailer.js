@@ -63,6 +63,24 @@ class Mailer {
             throw error;
         }
     }
+    
+    /**
+     * Send password reset link
+     * @param { object } details - An object containing the user's details and the reset link
+     */
+    async sendPasswordResetLink(details) {
+        const template = this.composeTemplate('password-reset', details);
+        console.log(template);
+        try {
+            await this.send({
+                recipients: [details.email],
+                subject: 'HealthCare - Reset Password',
+                html: template
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
 
     /**
      * Compose and return the HTML format of a mail
@@ -73,8 +91,6 @@ class Mailer {
     composeTemplate(templateName, data) {
         const templatePath = path.join(__dirname, '../templates/mails', `/${templateName}.hbs`);
         const templateFile = fs.readFileSync(templatePath).toString();
-
-        console.log(templateFile);
 
         const template = handlebars.compile(templateFile);
         return template(data);
