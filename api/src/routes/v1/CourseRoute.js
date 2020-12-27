@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
 import CourseCategoryValidator from '../../validators/courseCategory';
+import CourseValidator from '../../validators/course';
 import CourseCategoryController from '../../controllers/CourseCategoryController';
+import CourseController from '../../controllers/CourseController';
 
 const router = Router();
 
+router.route('/')
+    .post(authenticate, CourseValidator.validateBodyOnCreate, CourseController.createCourse);
 
 // COURSE CATEGORIES
 router.route('/categories')

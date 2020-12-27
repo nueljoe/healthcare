@@ -7,7 +7,7 @@ exports.up = function(knex) {
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.timestamp('updated_at').defaultTo(knex.fn.now());
 
-        table.foreign('parent_id').references('id').inTable('course_categories');
+        table.foreign('parent_id').references('id').inTable('course_categories').onDelete('CASCADE').onUpdate('CASCADE');
     });
 };
   
