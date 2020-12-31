@@ -37,6 +37,22 @@ router.route('/:slug/modules/:moduleId/status')
 router.route('/:slug/modules/:moduleId/position')
     .patch(authenticate, CourseModuleValidator.validateBodyOnPositionUpdate, CourseController.updateModulePosition);
 
+// COURSE LECTURES
+router.route('/:slug/modules/:moduleId/lectures')
+    .post(authenticate, CourseModuleValidator.validateBodyOnCreate, CourseController.createCourseLecture)
+    .get(pagination, CourseController.fetchLecturesInModule);
+
+router.route('/:slug/lectures/:lectureId')
+    .get(pagination, CourseController.fetchLecture)
+    .patch(authenticate, CourseModuleValidator.validateBodyOnUpdate, CourseController.updateCourseLecture)
+    .delete(authenticate, CourseController.deleteCourseLecture);
+
+router.route('/:slug/lectures/:lectureId/status')
+    .patch(authenticate, CourseModuleValidator.validateBodyOnStatusUpdate, CourseController.updateLectureStatus);
+
+router.route('/:slug/modules/:moduleId/lectures/:lectureId/position')
+    .patch(authenticate, CourseModuleValidator.validateBodyOnPositionUpdate, CourseController.updateLecturePosition);
+
 // COURSE CATEGORIES
 router.route('/categories')
     .patch(CourseCategoryValidator.validateBodyOnCreate, CourseCategoryController.createCategory)
