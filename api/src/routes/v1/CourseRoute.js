@@ -4,6 +4,7 @@ import pagination from '../../middlewares/pagination';
 import CourseCategoryValidator from '../../validators/courseCategory';
 import CourseValidator from '../../validators/course';
 import CourseModuleValidator from '../../validators/courseModule';
+import CourseLectureValidator from '../../validators/courseLecture';
 import CourseCategoryController from '../../controllers/CourseCategoryController';
 import CourseController from '../../controllers/CourseController';
 
@@ -39,19 +40,19 @@ router.route('/:slug/modules/:moduleId/position')
 
 // COURSE LECTURES
 router.route('/:slug/modules/:moduleId/lectures')
-    .post(authenticate, CourseModuleValidator.validateBodyOnCreate, CourseController.createCourseLecture)
+    .post(authenticate, CourseLectureValidator.validateBodyOnCreate, CourseController.createCourseLecture)
     .get(pagination, CourseController.fetchLecturesInModule);
 
 router.route('/:slug/lectures/:lectureId')
     .get(pagination, CourseController.fetchLecture)
-    .patch(authenticate, CourseModuleValidator.validateBodyOnUpdate, CourseController.updateCourseLecture)
+    .patch(authenticate, CourseLectureValidator.validateBodyOnUpdate, CourseController.updateCourseLecture)
     .delete(authenticate, CourseController.deleteCourseLecture);
 
 router.route('/:slug/lectures/:lectureId/status')
-    .patch(authenticate, CourseModuleValidator.validateBodyOnStatusUpdate, CourseController.updateLectureStatus);
+    .patch(authenticate, CourseLectureValidator.validateBodyOnStatusUpdate, CourseController.updateLectureStatus);
 
 router.route('/:slug/modules/:moduleId/lectures/:lectureId/position')
-    .patch(authenticate, CourseModuleValidator.validateBodyOnPositionUpdate, CourseController.updateLecturePosition);
+    .patch(authenticate, CourseLectureValidator.validateBodyOnPositionUpdate, CourseController.updateLecturePosition);
 
 // COURSE CATEGORIES
 router.route('/categories')
