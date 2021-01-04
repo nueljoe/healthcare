@@ -10,7 +10,8 @@ exports.up = function(knex) {
         table.integer('category_id').unsigned().notNullable();
         table.integer('subcategory_id').unsigned();
         table.integer('creator_id').unsigned().notNullable();
-        table.integer('last_lesson_viewed').unsigned();
+        table.float('price').defaultTo(0.0);
+        table.float('discount'); // A value between 0 and 1
         table.boolean('is_published').defaultTo(false);
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.timestamp('updated_at').defaultTo(knex.fn.now());

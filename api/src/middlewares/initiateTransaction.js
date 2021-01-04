@@ -1,4 +1,4 @@
-import db from '../models';
+import knex from '../database';
 
 /**
  * initiates a database transaction and attaches the
@@ -6,7 +6,7 @@ import db from '../models';
  * `next()`.
  */
 export default async (req, res, next) => {
-  const transaction = await db.sequelize.transaction();
+  const transaction = await knex.transaction();
   req.transaction = transaction;
   next();
 };

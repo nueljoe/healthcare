@@ -1,5 +1,7 @@
 import knex from '../database';
 import _slugify from '../utils/_slugify';
+import PaymentReferenceGenerator from '../utils/PaymentReferenceGenerator';
+import paystack from '../utils/paystack';
 import { ClientError, NotFoundError, PermissionError } from '../errors';
 
 export default {
@@ -1024,4 +1026,148 @@ export default {
             next(error);
         }
     },
+
+    // ************************************************************************* //
+    // ************************************************************************* //
+    // ***************************** COURSE ENROLLMENT *************************** //
+    // ************************************************************************* //
+    // ************************************************************************* //
+    /**
+     * Creates a new course enrollment
+     * @param { object } payload - An object containing details of the intending enrollment
+     * @param { number } payload.course_id - The associated course's ID
+     * @param { number } payload.user_id - The ID of the user to be enrolled
+     * @param { string | undefined } payload.payment_reference - The payment reference for the course in the
+     * case where the course is not free.
+     * @param { object } transaction - A DB transaction object
+     */
+    async enroll({course_id, user_id, payment_reference = ''}, transaction) {
+        try {
+            await knex('enrolled_courses')
+                .transacting(transaction)
+                .insert({
+                    course_id,
+                    user_id,
+                    payment_reference
+                });
+
+            await transaction.commit();
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Your have been successfully enrolled'
+            });
+        } catch (error) {
+            await transaction.rollback(error);
+            next(error);
+        }
+    },
+
+    // ************************************************************************* //
+    // ************************************************************************* //
+    // ***************************** NEW COURSE PAYMENTS *************************** //
+    // ************************************************************************* //
+    // ************************************************************************* //
+    /**
+     * Initiates the enrollment of a user into a course
+     */
+    async initiateCourseEnrollment(req, res, next) {
+        const { user, transaction, params } = req;
+
+        try {
+            const course = await knex.first().from('courses').where({ slug: params.slug });
+            
+            if (!course || !course.is_published) {
+                throw new NotFoundError('Course not found');
+            }
+            
+            if (course.creator_id === user.id) {
+                throw new PermissionError('You can not be enrolled in your own course.');
+            }
+
+            const sameCourseEnrolled = await knex.first().from('enrolled_courses').where({
+                course_id: course.id,
+                user_id: user.id
+            });
+
+            if (sameCourseEnrolled) {
+                throw new PermissionError('You are already enrolled in this course');
+            }
+
+            // Enroll the user immediately if the course is free.
+            if (!course.price) {
+                await knex('enrolled_courses')
+                .transacting(transaction)
+                .insert({
+                    course_id,
+                    user_id,
+                });
+
+                await transaction.commit();
+
+                return res.status(201).json({
+                    status: 'success',
+                    message: 'You have been successfully enrolled'
+                });
+            }
+
+            const PRG = new PaymentReferenceGenerator({
+                user_id: user.id,
+                user_email: user.email,
+                course_slug: course.slug
+            });
+
+            const amount = course.discount ? course.price - (course.price * course.discount) : course.price;
+
+            await knex('payments')
+                .transacting(transaction)
+                .insert({
+                    amount,
+                    resource: 'course',
+                    resource_id: course.id,
+                    user_id: user.id,
+                    reference: PRG.reference,
+                });
+
+            const paystackResponse = await paystack.initiatePayment({
+                amount,
+                email: user.email,
+                reference: PRG.reference,
+                metadata: JSON.stringify({
+                  custom_fields: [
+                    {
+                        display_name: 'User ID',
+                        variable_name: 'user_id',
+                        value: user.id
+                    },
+                    {
+                        display_name: 'Course ID',
+                        variable_name: 'course_id',
+                        value: course.id
+                    },
+                    {
+                        display_name: 'Course',
+                        variable_name: 'course_title',
+                        value: course.title
+                    }
+                  ]  
+                })
+            });
+
+            if (!paystackResponse.status) {
+                throw new Error(paystackResponse.message);
+            }
+
+            await transaction.commit();
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Payment was successfully initialized',
+                data: paystackResponse.data
+            });
+        } catch (error) {
+            await transaction.rollback(error);
+            next(error);
+        }
+    }
 }
