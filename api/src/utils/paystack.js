@@ -11,8 +11,6 @@ class Paystack {
    constructor() {
         this.BASEURL = 'https://api.paystack.co';
         this.SECKEY = env.get('PAYSTACK_SEC');
-
-        console.log(this.SECKEY);
     }
 
     async get(path, options) {

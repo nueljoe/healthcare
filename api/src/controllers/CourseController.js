@@ -1077,7 +1077,7 @@ export default {
         try {
             const course = await knex.first().from('courses').where({ slug: params.slug });
             
-            if (!course) {
+            if (!course || !course.is_published) {
                 throw new NotFoundError('Course not found');
             }
             
@@ -1101,7 +1101,6 @@ export default {
                 .insert({
                     course_id,
                     user_id,
-                    payment_reference
                 });
 
                 await transaction.commit();

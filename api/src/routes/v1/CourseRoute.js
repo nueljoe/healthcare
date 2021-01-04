@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
-import pagination from '../../middlewares/pagination';
+import pagination from '../../middlewares/paginate';
 import initiateTransaction from '../../middlewares/initiateTransaction';
 import CourseCategoryValidator from '../../validators/courseCategory';
 import CourseValidator from '../../validators/course';
