@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
 import pagination from '../../middlewares/pagination';
+import initiateTransaction from '../../middlewares/initiateTransaction';
 import CourseCategoryValidator from '../../validators/courseCategory';
 import CourseValidator from '../../validators/course';
 import CourseModuleValidator from '../../validators/courseModule';
@@ -21,6 +22,8 @@ router.route('/:slug')
     
 router.route('/:slug/status')
     .patch(authenticate, CourseValidator.validateBodyOnStatusUpdate, CourseController.updateStatus);
+
+router.route('/:slug/enrollments').post(authenticate, initiateTransaction, CourseController.initiateCourseEnrollment);
 
 // COURSE MODULES
 router.route('/:slug/modules')

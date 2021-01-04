@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 
-export default {
+module.exports = {
     /**
      * Attempts to return the value of an environment variable
      * @param { string } variable - An environment variable name
