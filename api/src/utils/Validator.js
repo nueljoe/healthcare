@@ -1,7 +1,9 @@
 import Joi from 'joi';
 import ClientError from '../errors/ClientError';
 
+/** A utility class for data validation */
 export default class Validator {
+    /** Validates the body of incoming requests */
     static validateBody(schema) {
         return async (req, res, next) => {
             try {
@@ -13,6 +15,7 @@ export default class Validator {
         }
     }
 
+    /** Validates the query params of incoming requests */
     static validateQuery(schema) {
         return async (req, res, next) => {
             try {
