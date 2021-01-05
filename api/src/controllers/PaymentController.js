@@ -1,5 +1,10 @@
+import crypto from 'crypto';
 import knex from '../database';
+import env from '../utils/env';
 import { ClientError, NotFoundError, PermissionError } from '../errors';
+
+/** Pay stack secret key */
+var secret = env.get('PAYSTACK_SEC');
 
 export default {
     /**
@@ -8,7 +13,14 @@ export default {
     async verifyPayment(req, res, next) {
         const { transaction, body } = req;
 
-        try {            
+        try {
+            // Verify that the event is from paystack
+            const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
+
+            if (hash !== req.headers['x-paystack-signature']) {
+                throw new PermissionError();
+            }
+
             const payment = await knex.first()
                 .from('payments')
                 .where('status', 'pending')
@@ -21,7 +33,8 @@ export default {
             if (body.event === 'charge.failed') {
                 await knex('payments')
                     .transacting(transaction)
-                    .update({ status: 'success' })
+                    .update({ status: 'failed' })
+                    .where('id', payment.id);
 
             } else if (body.event === 'charge.success') {
 
@@ -40,6 +53,7 @@ export default {
                 await knex('payments')
                     .transacting(transaction)
                     .update({ status: 'success', paid_at: body.data.paid_at })
+                    .where('id', payment.id);
             }
 
             await transaction.commit();

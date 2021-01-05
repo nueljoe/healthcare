@@ -5,6 +5,7 @@ exports.up = function(knex) {
         table.string('last_name').notNullable();
         table.string('avatar');
         table.string('gender');
+        table.text('bio');
         table.integer('user_id').unsigned().notNullable();
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.timestamp('updated_at').defaultTo(knex.fn.now());
