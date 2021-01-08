@@ -1,8 +1,10 @@
 const _bcrypt = require('../../utils/_bcrypt');
 
-exports.seed = function(knex) {
+exports.seed = async function(knex) {
+  await knex.raw('SET FOREIGN_KEY_CHECKS=0');
+
   // Deletes ALL existing entries in users table
-  return knex('users').del()
+  await knex('users').del()
     .then(async function () {
       const encryptedPassword = await _bcrypt.hash('secret');
       const currentDate = new Date();
@@ -32,7 +34,7 @@ exports.seed = function(knex) {
         },
       ]);
     }).then(function () {
-      // Deletes ALL existing entries in users table
+      // Deletes ALL existing entries in user_profiles table
       return knex('user_profiles').del()
     }).then(function () {
       // Inserts profiles
@@ -60,4 +62,7 @@ exports.seed = function(knex) {
         },
       ]);
     });
+
+  
+  await knex.raw('SET FOREIGN_KEY_CHECKS=1');
 };

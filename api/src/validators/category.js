@@ -12,6 +12,7 @@ const schemaOnUpdate = Joi.object({
     is_active: Joi.boolean()
 });
 
+/** A Joi schema for validating product and course category data from clients */
 export default {
     validateBodyOnCreate: Validator.validateBody(schemaOnCreate),
     validateBodyOnUpdate: Validator.validateBody(schemaOnUpdate),
