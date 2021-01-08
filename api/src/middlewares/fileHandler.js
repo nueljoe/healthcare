@@ -27,6 +27,7 @@ export default {
      * @param { Array<string> } filter - An array of file types(Ex: image, audio, etc.) allowable on this upload
      */
     single: (fieldName, filter = []) => setup(...filter).single(fieldName),
+
     /**
      * This sets a `files` field on the `Request` object
      * @param { string } fieldName - A key on the request body containing an array of

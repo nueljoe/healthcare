@@ -2,11 +2,9 @@ import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
 import pagination from '../../middlewares/paginate';
 import initiateTransaction from '../../middlewares/initiateTransaction';
-import CourseCategoryValidator from '../../validators/courseCategory';
 import CourseValidator from '../../validators/course';
 import CourseModuleValidator from '../../validators/courseModule';
 import CourseLectureValidator from '../../validators/courseLecture';
-import CourseCategoryController from '../../controllers/CourseCategoryController';
 import CourseController from '../../controllers/CourseController';
 
 const router = Router();
@@ -56,17 +54,5 @@ router.route('/:slug/lectures/:lectureId/status')
 
 router.route('/:slug/modules/:moduleId/lectures/:lectureId/position')
     .patch(authenticate, CourseLectureValidator.validateBodyOnPositionUpdate, CourseController.updateLecturePosition);
-
-// COURSE CATEGORIES
-router.route('/categories')
-    .patch(CourseCategoryValidator.validateBodyOnCreate, CourseCategoryController.createCategory)
-    .get(CourseCategoryController.fetchCategories);
-
-router.route('/categories/:id')
-    .patch(CourseCategoryValidator.validateBodyOnUpdate, CourseCategoryController.updateCategory)
-    .delete(CourseCategoryController.deleteCategory);
-
-router.route('/categories/:id/subcategories')
-    .get(CourseCategoryController.fetchSubcategories);
 
 export default router;
