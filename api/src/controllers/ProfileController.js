@@ -41,7 +41,7 @@ export default {
                 .update(body)
                 .where('user_id', user.id);
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Your profile was updated successfully'
             })
@@ -57,29 +57,27 @@ export default {
         const { user, file } = req;
 
         try {
-            console.log(file);
-
-            const fileName = file ? `user-${user.id}-avatar.jpeg` : "";
+            const filePath = file ? `images/avatars/user-${user.id}-avatar.jpeg` : "";
             
-           if (file) {
-                // First, upload the file to the cloud or save locally. Then proceed if successful
-                await sharp(file.buffer)
-                    .toFormat('jpeg')
-                    .jpeg({ quality: 90 })
-                    .toFile(path.resolve(__dirname, `../public/images/avatars/${fileName}`), (err, info) => {
-                        console.log(err)
-                    }); // For now, let's save on disk. We'll push files to the cloud later.
-           }
+            if (file) {
+                    // First, upload the file to the cloud or save locally. Then proceed if successful
+                    await sharp(file.buffer)
+                        .toFormat('jpeg')
+                        .jpeg({ quality: 90 })
+                        .toFile(path.resolve(__dirname, `../public/${filePath}`), (err, info) => {
+                            console.log(err)
+                        }); // For now, let's save on disk. We'll push files to the cloud later.
+            }
 
             await knex('user_profiles')
-                .update({ avatar: fileName })
+                .update({ avatar: filePath })
                 .where('user_id', user.id);
             
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Your profile picture was updated successfully',
                 data: {
-                    "avatar": fileName
+                    avatar: filePath
                 }
             })
         } catch (error) {

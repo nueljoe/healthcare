@@ -4,8 +4,8 @@ exports.up = function(knex) {
         table.string('title').notNullable();
         table.string('slug').notNullable();
         table.text('description').notNullable();
-        table.text('banner').notNullable();
-        table.text('tags');
+        table.string('banner').notNullable();
+        table.string('tags');
         table.text('requirements');
         table.integer('category_id').unsigned().notNullable();
         table.integer('subcategory_id').unsigned();

@@ -150,7 +150,7 @@ export default {
 
             const payload = { id: user.id, email: user.email };
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Signed in successfully',
                 data: {
@@ -187,7 +187,7 @@ export default {
                 .where('id', user.id)
                 .update({ password: encryptedPassword });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Password was updated successfully'
             });
@@ -237,7 +237,7 @@ export default {
                 verification_url: `${env.get('FRONTEND_BASEURL')}/auth/verify?token=${token}`
             });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'A verification mail has been sent to you',
             });
@@ -280,7 +280,7 @@ export default {
                 password_reset_link: `${env.get('FRONTEND_BASEURL')}/auth/reset-password?token=${token}`
             });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'A link has been sent to your email'
             });
@@ -326,7 +326,7 @@ export default {
 
             await transaction.commit();
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Password was reset successfully'
             });
