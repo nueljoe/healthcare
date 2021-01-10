@@ -18,7 +18,7 @@ router.route('/:slug')
     .delete(authenticate, ProductController.deleteProduct);
 
 router.route('/:slug/images')
-    .post(authenticate, formHandler.array('images', ['image'], 8), ProductValidator.validateBodyOnUpdate, ProductController.addProductImages)
+    .post(authenticate, formHandler.array('images', ['image'], 8), ProductController.addProductImages)
     .get(ProductController.fetchProductImages)
 
 router.route('/:slug/images/:imageId')

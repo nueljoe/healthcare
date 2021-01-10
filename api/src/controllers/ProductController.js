@@ -261,7 +261,7 @@ export default {
             res.status(200).json({
                 status: 'success',
                 message: 'Query successful',
-                data: product
+                data: product,
             });
         } catch (error) {
             next(error);
@@ -287,8 +287,16 @@ export default {
 
             // We must check first if the product has ever been ordered
 
+            const productImages = await knex
+                .select('id', 'img_url')
+                .from('product_images')
+                .where('product_id', product.id);
+
             // Delete associated images
-            await removeFile(product.img_url);
+            await Promise.all([
+                removeFile(product.img_url),
+                ...productImages.map(productImage => removeFile(productImage.img_url))
+            ]);
 
             await knex('products').delete().where({ slug });
 
@@ -306,13 +314,51 @@ export default {
      * 
      */
     async addProductImages(req, res, next) {
-        const { files } = req;
+        const { user, files, params } = req;
 
         try {
+            if (user.label !== 'admin') {
+                throw new PermissionError();
+            }
+
+            
+            if (!files) {
+                throw new ClientError('No file to upload');
+            }
+
+            const product = await knex.first('id').from('products').where('slug', params.slug);
+
+            if (!product) {
+                throw new NotFoundError('Product not found');
+            }
+            
             const imgMetaData = [];
+            const currentTimestamp = Date.now();
+            let filePath = '';
+
+            files.forEach((file, index) => {
+                if (file) {
+                    filePath = `images/products/image-${index}-of-product-${product.id}-at-${currentTimestamp}.jpeg`;
+
+                    imgMetaData[index] = { product_id: product.id, img_url: filePath };
+    
+                    // First, upload the file to the cloud or save locally. Then proceed if successful
+                    sharp(file.buffer)
+                        .toFormat('jpeg')
+                        .jpeg({ quality: 90 })
+                        .toFile(path.resolve(__dirname, `../public/${filePath}`), (err, info) => {
+                            console.log(err)
+                        }); // For now, let's save on disk. We'll push files to the cloud later.
+                }
+            });
+
+            await knex('product_images')
+                .insert(imgMetaData);
+
             res.status(201).json({
                 status: 'success',
-                message: 'Image was added successfully'
+                message: 'Images were added successfully',
+                data: imgMetaData
             });
         } catch (error) {
             next(error);
@@ -326,12 +372,20 @@ export default {
         const { params } = req;
 
         try {
+            const product = await knex.first('id').from('products').where('slug', params.slug);
 
+            if (!product) {
+                throw new NotFoundError('Product not found');
+            }
+
+            const images = await knex.select('id', 'img_url', 'product_id')
+                .from('product_images')
+                .where('product_id', product.id);
 
             res.status(200).json({
                 status: 'success',
                 message: 'Query successful',
-                data: []
+                data: images
             });
         } catch (error) {
             next(error);
@@ -345,6 +399,24 @@ export default {
         const { params } = req;
 
         try {
+            const product = await knex.first('id').from('products').where('slug', params.slug);
+
+            if (!product) {
+                throw new NotFoundError('Product not found');
+            }
+
+            const image = await knex.first('id', 'img_url')
+                .from('product_images')
+                .where('product_id', product.id).andWhere('id', params.imageId);
+
+            if (!image) {
+                throw new NotFoundError('Image not found');
+            }
+
+            await removeFile(image.img_url);
+
+            await knex('product_images').delete().where('id', image.id);
+
             res.status(200).json({
                 status: 'success',
                 message: 'Image was removed successfully'
