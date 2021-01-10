@@ -196,7 +196,7 @@ export default {
 
             await knex.delete().from('product_categories').where('id', params.id);
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Successfully deleted category'
             });

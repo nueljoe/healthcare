@@ -45,7 +45,7 @@ export default {
                 .where('id', id)
                 .update({ ...body });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Subscription successfully updated'
             });
@@ -65,7 +65,7 @@ export default {
                 .where('email', email)
                 .delete();
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Successfully unsubscribed'
             });

@@ -126,7 +126,7 @@ export default {
 
             await knex('course_modules').delete().where({ id: params.moduleId });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Module was successfully deleted',
             });

@@ -100,7 +100,7 @@ export default {
             let slug;
 
             if (body.title) {
-                slug = body.title.toLowerCase() !== course.title.toLowerCase() ? _slugify(body.title) : course.slug;
+                slug = body.title !== course.title ? _slugify(body.title) : course.slug;
             }
 
 
@@ -112,7 +112,7 @@ export default {
                 updated_at: new Date()
             });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Course was successfully updated',
                 data: {
@@ -150,11 +150,11 @@ export default {
             }
             
             if (course.is_published && is_published) {
-               return res.status(202).json(genericSuccessResponse);
+               return res.status(200).json(genericSuccessResponse);
             }
 
             if (!course.is_published && !is_published) {
-                return res.status(202).json(genericSuccessResponse);
+                return res.status(200).json(genericSuccessResponse);
              }
 
 
@@ -165,7 +165,7 @@ export default {
                 updated_at: new Date()
             });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: `Course was successfully ${intendingStatus}`
             });
@@ -209,7 +209,7 @@ export default {
                 throw new NotFoundError('Course not found');
             }
 
-            res.status(201).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Query successful',
                 data: course
@@ -240,7 +240,7 @@ export default {
 
             await knex('courses').delete().where({ slug });
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Course was successfully deleted',
             });
@@ -354,7 +354,7 @@ export default {
 
             await trx.commit();
             
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Module was successfully updated',
                 data: {
@@ -399,11 +399,11 @@ export default {
             }
             
             if (courseModule.is_published && is_published) {
-               return res.status(202).json(genericSuccessResponse);
+               return res.status(200).json(genericSuccessResponse);
             }
 
             if (!courseModule.is_published && !is_published) {
-                return res.status(202).json(genericSuccessResponse);
+                return res.status(200).json(genericSuccessResponse);
              }
 
             await knex('course_modules')
@@ -423,7 +423,7 @@ export default {
 
             await trx.commit();
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: `Module was successfully ${intendingStatus}`
             });
@@ -482,7 +482,7 @@ export default {
                 }));
             } else {
                 await trx.commit();
-                return res.status(202).json(genericSuccessResponse);
+                return res.status(200).json(genericSuccessResponse);
             }
             
             await Promise.all([ // In an attempt to achieve concurrency
@@ -504,7 +504,7 @@ export default {
             
             await trx.commit();
             
-            res.status(202).json(genericSuccessResponse);
+            res.status(200).json(genericSuccessResponse);
         } catch (error) {
             await trx.rollback(error);
             next(error);
@@ -609,7 +609,7 @@ export default {
 
             await trx.commit();
             
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Module was successfully deleted',
             });
@@ -747,7 +747,7 @@ export default {
 
             await trx.commit();
             
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Lecture was successfully updated',
                 data: {
@@ -793,11 +793,11 @@ export default {
             }
             
             if (lecture.is_published && is_published) {
-               return res.status(202).json(genericSuccessResponse);
+               return res.status(200).json(genericSuccessResponse);
             }
 
             if (!lecture.is_published && !is_published) {
-                return res.status(202).json(genericSuccessResponse);
+                return res.status(200).json(genericSuccessResponse);
              }
 
             await knex('course_modules')
@@ -817,7 +817,7 @@ export default {
 
             await trx.commit();
 
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: `Lecture was successfully ${intendingStatus}`
             });
@@ -903,7 +903,7 @@ export default {
             
             await trx.commit();
             
-            res.status(202).json(genericSuccessResponse);
+            res.status(200).json(genericSuccessResponse);
         } catch (error) {
             await trx.rollback(error);
             next(error);
@@ -1017,7 +1017,7 @@ export default {
 
             await trx.commit();
             
-            res.status(202).json({
+            res.status(200).json({
                 status: 'success',
                 message: 'Lecture was successfully deleted',
             });

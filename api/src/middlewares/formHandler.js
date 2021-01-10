@@ -18,6 +18,10 @@ const setup = (filter = []) => {
     });
 }
 
+/**
+ * A file handler which uses the multer package to handle multipart forms. Files in the 
+ * form are stored as blobs in memory and passed on to the next middleware.
+ */
 export default {
     /**
      * This sets a `file` field on the `Request` object
@@ -35,4 +39,13 @@ export default {
      * @param { Array<string> } filter - An array of file types (Ex: image, audio, etc.) allowable on this upload
      */
     fields: (fieldName, filter = []) => setup(...filter).fields(fieldName),
+    
+    /**
+     * This sets a `files` field on the `Request` object
+     * @param { string } fieldName - A key on the request body containing an array of
+     * multipart form fields
+     * @param { Array<string> } filter - An array of file types (Ex: image, audio, etc.) allowable on this upload
+     * @param { number } maxCount - The maximum number of items that can be uploaded at once.
+     */
+    array: (fieldName, filter = [], maxCount) => setup(...filter).array(fieldName, maxCount),
 }
