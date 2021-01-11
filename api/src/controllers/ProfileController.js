@@ -170,4 +170,163 @@ export default {
             next(error);
         }
     },
+
+    /**
+     * Adds a product to a user's cart
+     */
+    async addToCart(req, res, next) {
+        const { user, body } = req;
+
+        try {
+            const product = await knex.first('id', 'stock').from('products')
+            .where({
+                id: body.product_id,
+                is_published: true
+            });
+
+            if (!product) {
+                throw new NotFoundError('Product not found');
+            }
+
+            // Typically, you want to check the quantity against the unit in stock. But we ain't doing that yet.
+
+            const duplicateItemInCart = await knex.first().from('cart_items')
+                .where('product_id', body.product_id)
+                .andWhere('user_id', user.id);
+
+            if (!duplicateItemInCart) {
+                await knex('cart_items').insert({ ...body, user_id: user.id });
+            }
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Product was added to cart successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    
+    /**
+     * Allows the user to update the quantity of an item in their cart
+     */
+    async updateCartItem(req, res, next) {
+        const { user, params, body } = req;
+
+        try {
+            const cartItem = await knex.first().from('cart_items')
+                .where('id', params.itemId)
+                .andWhere('user_id', user.id);
+
+            if (!cartItem) {
+                throw new NotFoundError('Unable to find the cart item');
+            }
+
+            // Typically, you want to check the quantity against the unit in stock for the product. But we ain't doing that yet.
+
+            await knex('cart_items')
+                .update(...body)
+                .where('id', cartItem.id);
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Cart item was successfully updated'
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
+     * Allows the user to remove an item from their cart
+     */
+    async removeCartItem(req, res, next) {
+        const { user, params } = req;
+
+        try {
+            const cartItem = await knex.first().from('cart_items')
+                .where('id', params.itemId)
+                .andWhere('user_id', user.id);
+
+            if (!cartItem) {
+                throw new NotFoundError('Unable to find the cart item');
+            }
+
+            // Typically, you want to check the quantity against the unit in stock for the product. But we ain't doing that yet.
+
+            await knex('cart_items')
+                .delete()
+                .where('id', cartItem.id);
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Cart item was successfully removed'
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    
+    /**
+     * Fetches all the items in a user's cart
+     */
+    async fetchCart(req, res, next) {
+        const { user, query: { limit, offset, reference, is_paid } } = req;
+
+        const whereClause = {};
+
+        try {
+            if (is_paid !== undefined)  {
+                whereClause.is_paid = is_paid;
+            }
+            
+            if (reference) {
+                whereClause.reference = reference;
+            }
+
+            const cart = await knex
+                .select('item.product_id', 
+                    'item.quantity', 
+                    'product.name', 
+                    'product.img_url', 
+                    'product.slug', 
+                    'product.price', 
+                    'product.discount', 
+                    'product.stock')
+                .from('cart_items as item')
+                .innerJoin('products as product')
+                .where('user_id', user.id)
+                .andWhere(whereClause)
+                .limit(limit)
+                .offset(offset);
+
+            res.status(200).json({
+                status:'success',
+                message: 'Query successful',
+                data: cart
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    
+    /**
+     * Allows the user to delete all the items in their cart
+     */
+    async clearCart(req, res, next) {
+        const { user } = req;
+
+        try {
+            await knex('cart_items').delete().where('user_id', user.id);
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Your cart was cleared successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    
+    
 };
