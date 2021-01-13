@@ -175,6 +175,31 @@ export default {
     },
 
     /**
+     * Fetches a paginated list orders created by the current user
+     */
+    async fetchOrders(req, res, next) {
+        const { user, query: { limit, offset } } = req;
+
+        try {
+
+            const orders = await knex
+                .select()
+                .from('orders')
+                .where('user_id', user.id)
+                .limit(limit)
+                .offset(offset);
+
+            res.status(200).json({
+                status:'success',
+                message: 'Query successful',
+                data: orders
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
      * Adds a product to a user's cart
      */
     async addToCart(req, res, next) {

@@ -17,6 +17,7 @@ router.patch('/avatar', authenticate, formHandler.single('avatar', ['image']), P
 router.get('/payments', authenticate, paginate, ProfileController.fetchPaymentHistory);
 router.get('/enrollments', authenticate, paginate, ProfileController.fetchCoursesEnrolled);
 router.get('/courses', authenticate, paginate, ProfileController.fetchCoursesCreated);
+router.get('/orders', authenticate, paginate, ProfileController.fetchOrders);
 
 // USER'S CART
 router.route('/cart')
