@@ -32,7 +32,7 @@ export default {
             await knex('enrolled_courses').insert({
                 course_id: course.id,
                 user_id: user.id,
-                payment_reference: 
+                payment_reference: ''
             });
 
             res.status(201).json({

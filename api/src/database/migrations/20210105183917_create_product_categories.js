@@ -12,6 +12,8 @@ exports.up = function(knex) {
     });
 };
   
-exports.down = function(knex) {
-    return knex.schema.dropTableIfExists('product_categories');
+exports.down = async function(knex) {
+    await knex.raw('SET FOREIGN_KEY_CHECKS = 0');
+    await knex.schema.dropTableIfExists('product_categories');
+    return knex.raw('SET FOREIGN_KEY_CHECKS = 1');
 };

@@ -31,6 +31,6 @@ router.route('/cart/items/:itemId')
     .delete(authenticate, ProfileController.removeCartItem);
 
 router.route('/cart/checkout')
-    .post(authenticate, ProfileController.checkout);
+    .post(authenticate, CartValidator.validateBodyOnCheckout, ProfileController.checkout);
 
 export default router;

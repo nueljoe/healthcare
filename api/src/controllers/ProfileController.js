@@ -1,7 +1,10 @@
 import path from 'path';
 import sharp from 'sharp';
 import knex from '../database';
+import PaymentReferenceGenerator from '../utils/PaymentReferenceGenerator';
+import paystack from '../utils/paystack';
 import { ClientError, NotFoundError, PermissionError } from '../errors';
+import { trace } from 'joi';
 
 export default {
     /**
@@ -328,5 +331,122 @@ export default {
         }
     },
     
+    /**
+     * Creates an order off the items in the user's cart
+     */
+    async checkout(req, res, next) {
+        const { user, transaction, body } = req;
+
+        try {
+            if (body.payment_type !== 'online' && body.payment_type !== 'cash') {
+                throw new ClientError('Payment type must be either "online" or "cash"');
+            }
+
+            const cartItems = await knex
+                .select('item.product_id', 
+                    'item.quantity', 
+                    'product.name', 
+                    'product.img_url', 
+                    'product.slug', 
+                    'product.price', 
+                    'product.discount', 
+                    'product.stock')
+                .from('cart_items as item')
+                .innerJoin('products as product')
+                .where('user_id', user.id);
+
+            if (!cartItems.length) {
+                throw new ClientError('No item in cart!');
+            }
+
+            // Create an order
+            const [ orderId ] = await knex('order')
+                .transacting(transaction)
+                .insert({
+                    user_id: user.id,
+                    reference: `301${Date.now() * orderItems.length + Math.floor(Math.random() * 100000) + 1}`,
+                });
+
+            const orderItems = [];
+            let orderTotalAmount = 0;
+
+            let itemPrice = 0;
+            cartItems.forEach((item, index) => {
+                itemPrice = item.discount ? item.price - (item.price * item.discount) : item.price;
+
+                orderItems[index] = {
+                    order_id: orderId,
+                    product_id: item.product_id,
+                    amount: itemPrice,
+                    quantity: item.quantity
+                };
+
+                orderTotalAmount = orderTotalAmount + itemPrice;
+            });
+                
+            // Create order items
+             await knex('order_items')
+                .transacting(transaction)
+                .insert(orderItems);
+
+            // Clear the cart. We're done with it
+            await knex('cart_items')
+                .transacting(transaction)
+                .delete()
+                .where('user_id', user.id);
+            
+            const PRG = new PaymentReferenceGenerator({ order_items: orderItems });
+
+            // initialize a payment
+            await knex('payments')
+                .transacting(transaction)
+                .insert({
+                    type: body.payment_type,
+                    amount,
+                    resource: 'course',
+                    resource_id: course.id,
+                    user_id: user.id,
+                    reference: PRG.reference,
+                });
+
+            let paystackResponse;
+
+            if (body.payment_type === 'online') {
+                paystackResponse = await paystack.initiatePayment({
+                    amount: orderTotalAmount,
+                    email: user.email,
+                    reference: PRG.reference,
+                    metadata: JSON.stringify({
+                      custom_fields: [
+                        {
+                            display_name: 'User ID',
+                            variable_name: 'user_id',
+                            value: user.id
+                        },
+                        {
+                            display_name: 'Order ID',
+                            variable_name: 'order_id',
+                            value: orderId
+                        },
+                      ]  
+                    })
+                });
     
+                if (!paystackResponse.status) {
+                    throw new Error(paystackResponse.message);
+                }
+            }
+            
+            await transaction.commit();
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Your order was placed successfully',
+                data: paystackResponse && paystackResponse.data
+            });
+        } catch (error) {
+            await transaction.rollback(error);
+            next(error);
+        }
+    },
 };

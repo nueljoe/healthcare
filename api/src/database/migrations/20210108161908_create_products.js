@@ -17,12 +17,14 @@ exports.up = function(knex) {
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.timestamp('updated_at').defaultTo(knex.fn.now());
 
-        table.foreign('category_id').references('id').inTable('course_categories').onDelete('SET NULL').onUpdate('CASCADE');
-        table.foreign('subcategory_id').references('id').inTable('course_categories').onDelete('SET NULL').onUpdate('CASCADE');
+        table.foreign('category_id').references('id').inTable('product_categories').onDelete('SET NULL').onUpdate('CASCADE');
+        table.foreign('subcategory_id').references('id').inTable('product_categories').onDelete('SET NULL').onUpdate('CASCADE');
         table.foreign('creator_id').references('id').inTable('users');
     });
 };
   
-exports.down = function(knex) {
-    return knex.schema.dropTableIfExists('products');
+exports.down = async function(knex) {
+    await knex.raw('SET FOREIGN_KEY_CHECKS = 0');
+    knex.schema.dropTableIfExists('products');
+    return knex.raw('SET FOREIGN_KEY_CHECKS = 1');
 };

@@ -10,7 +10,12 @@ const schemaOnUpdate = Joi.object({
     quantity: Joi.number().required(),
 });
 
+const schemaOnCheckout = Joi.object({
+    payment_type: Joi.string().required().regex(/^online|cash$/),
+});
+
 export default {
     validateBodyOnCreate: Validator.validateBody(schemaOnCreate),
     validateBodyOnUpdate: Validator.validateBody(schemaOnUpdate),
+    validateBodyOnCheckout: Validator.validateBody(schemaOnCheckout),
 }
