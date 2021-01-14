@@ -222,8 +222,15 @@ export default {
                 .where('product_id', body.product_id)
                 .andWhere('user_id', user.id);
 
+            console.log(duplicateItemInCart);
+
             if (!duplicateItemInCart) {
                 await knex('cart_items').insert({ ...body, user_id: user.id });
+            } else {
+                await knex('cart_items')
+                    .update({ quantity: duplicateItemInCart.quantity + 1 })
+                    .where('product_id', body.product_id)
+                    .andWhere('user_id', user.id);
             }
 
             res.status(201).json({
@@ -253,7 +260,7 @@ export default {
             // Typically, you want to check the quantity against the unit in stock for the product. But we ain't doing that yet.
 
             await knex('cart_items')
-                .update(...body)
+                .update({ ...body })
                 .where('id', cartItem.id);
 
             res.status(201).json({
@@ -313,7 +320,8 @@ export default {
             }
 
             const cart = await knex
-                .select('item.product_id', 
+                .select('item.id', 
+                    'item.product_id', 
                     'item.quantity', 
                     'product.name', 
                     'product.img_url', 
@@ -322,7 +330,7 @@ export default {
                     'product.discount', 
                     'product.stock')
                 .from('cart_items as item')
-                .innerJoin('products as product')
+                .rightOuterJoin('products as product', 'product.id', 'item.product_id')
                 .where('user_id', user.id)
                 .andWhere(whereClause)
                 .limit(limit)

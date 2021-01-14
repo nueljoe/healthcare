@@ -7,6 +7,7 @@ import PaymentRoute from './PaymentRoute';
 import ProfileRoute from './ProfileRoute';
 import ProductCategoryRoute from './ProductCategoryRoute';
 import ProductRoute from './ProductRoute';
+import OrderRoute from './OrderRoute';
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.use('/payments', PaymentRoute);
 router.use('/me', ProfileRoute);
 router.use('/product-categories', ProductCategoryRoute);
 router.use('/products', ProductRoute);
+router.use('/orders', OrderRoute);
 
 router.use('/', (req, res) => {
     res.status(200).json({
