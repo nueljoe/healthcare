@@ -16,8 +16,8 @@ exports.up = function(knex) {
         table.timestamp('created_at').defaultTo(knex.fn.now());
         table.timestamp('updated_at').defaultTo(knex.fn.now());
 
-        table.foreign('category_id').references('id').inTable('course_categories');
-        table.foreign('subcategory_id').references('id').inTable('course_categories');
+        table.foreign('category_id').references('id').inTable('course_categories').onDelete('NO ACTION');
+        table.foreign('subcategory_id').references('id').inTable('course_categories').onDelete('NO ACTION');
         table.foreign('creator_id').references('id').inTable('users');
     });
 };

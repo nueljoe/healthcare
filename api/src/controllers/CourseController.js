@@ -1122,6 +1122,7 @@ export default {
             await knex('payments')
                 .transacting(transaction)
                 .insert({
+                    type: 'online',
                     amount,
                     resource: 'course',
                     resource_id: course.id,
@@ -1163,7 +1164,6 @@ export default {
             res.status(201).json({
                 status: 'success',
                 message: 'Payment was successfully initialized',
-                data: paystackResponse.data
             });
         } catch (error) {
             await transaction.rollback(error);
