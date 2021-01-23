@@ -10,7 +10,7 @@ class PaymentReferenceGenerator {
 
         payload = JSON.stringify({ ...payload, timestamp: Date.now(), lengthOfRefString });
 
-        this.reference = crypto.createHmac('sha256', tokenPayload, { encoding: 'utf-8' })
+        this.reference = crypto.createHmac('sha256', payload, { encoding: 'utf-8' })
                             .update('payment-reference')
                             .digest('hex').slice(0, lengthOfRefString);
     }

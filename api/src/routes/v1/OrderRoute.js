@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
+import initiateTransaction from '../../middlewares/initiateTransaction';
 import OrderValidator from '../../validators/cart';
 import paginate from '../../middlewares/paginate';
 import OrderController from '../../controllers/OrderController';
@@ -10,10 +11,10 @@ router.route('/')
     .get(authenticate, paginate, OrderController.fetchOrders)
 
 router.route('/:reference')
-    .get(authenticate, OrderValidator.validateBodyOnCheckout, OrderController.fetchOneOrder);
+    .get(authenticate, OrderController.fetchOneOrder);
 
 router.route('/:reference/delivery')
-    .patch(authenticate, OrderController.markAsDelivered);
+    .patch(authenticate, initiateTransaction, OrderController.markAsDelivered);
 
 router.route('/:reference/cancel')
     .patch(authenticate, OrderController.cancelOrder);

@@ -51,7 +51,7 @@ class Paystack {
      * @returns { string } the full endpoint to the resource
      */
     composeEndpoint(path) {
-        return `${BASE_URL}${path}`;
+        return `${this.BASEURL}${path}`;
     }
 
     /**
@@ -73,7 +73,7 @@ class Paystack {
      */
     async initiatePayment(payload) {
         try {
-            const { data } = this.post('/transaction/initialize', payload);
+            const { data } = await this.post('/transaction/initialize', payload);
             return data;
         } catch (error) {
             throw this.handleResponseError(error);

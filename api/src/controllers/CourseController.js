@@ -1099,8 +1099,8 @@ export default {
                 await knex('enrolled_courses')
                 .transacting(transaction)
                 .insert({
-                    course_id,
-                    user_id,
+                    course_id: course.id,
+                    user_id: user.id,
                 });
 
                 await transaction.commit();

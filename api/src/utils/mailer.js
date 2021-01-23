@@ -21,7 +21,7 @@ class Mailer {
             }
         });
 
-        this.from = '"The HealthCare Team" <snettpro@gmail.com>';
+        this.from = '"The TeleHealth Team" <snettpro@gmail.com>';
     }
 
     /**
