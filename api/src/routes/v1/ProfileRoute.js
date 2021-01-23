@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authenticate from '../../middlewares/authenticate';
+import initiateTransaction from '../../middlewares/initiateTransaction';
 import ProfileValidator from '../../validators/profile';
 import CartValidator from '../../validators/cart';
 import paginate from '../../middlewares/paginate';
@@ -32,6 +33,6 @@ router.route('/cart/items/:itemId')
     .delete(authenticate, ProfileController.removeCartItem);
 
 router.route('/cart/checkout')
-    .post(authenticate, CartValidator.validateBodyOnCheckout, ProfileController.checkout);
+    .post(authenticate, initiateTransaction, CartValidator.validateBodyOnCheckout, ProfileController.checkout);
 
 export default router;

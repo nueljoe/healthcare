@@ -7,7 +7,7 @@ const schemaOnCreate = Joi.object({
 });
 
 const schemaOnUpdate = Joi.object({
-    quantity: Joi.number().required(),
+    quantity: Joi.number().required().min(1),
 });
 
 const schemaOnCheckout = Joi.object({

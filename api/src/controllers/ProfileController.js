@@ -183,11 +183,24 @@ export default {
         try {
 
             const orders = await knex
-                .select()
-                .from('orders')
-                .where('user_id', user.id)
+                .select(
+                    'order.id as id',
+                    'order.reference as reference',
+                    'order.cancelled_at as cancelled_at',
+                    'order.delivered_at as delivered_at',
+                    'order.created_at as created_at',
+                    'payment.paid_at as paid_at',
+                    'payment.amount as total_amount',
+                    'payment.reference as payment_reference',
+                    'payment.status as payment_status',
+                    )
+                .from('orders as order')
+                .innerJoin('payments as payment', 'payment.resource_id', 'order.id')
+                .where('order.user_id', user.id)
+                .andWhere('payment.resource', 'order')
                 .limit(limit)
-                .offset(offset);
+                .offset(offset)
+                .orderBy('created_at', 'desc');
 
             res.status(200).json({
                 status:'success',
@@ -393,11 +406,11 @@ export default {
             }
 
             // Create an order
-            const [ orderId ] = await knex('order')
+            const [ orderId ] = await knex('orders')
                 .transacting(transaction)
                 .insert({
                     user_id: user.id,
-                    reference: `301${Date.now() * orderItems.length + Math.floor(Math.random() * 100000) + 1}`,
+                    reference: `301${Date.now() * cartItems.length + Math.floor(Math.random() * 100000) + 1}`,
                 });
 
             const orderItems = [];
@@ -414,7 +427,7 @@ export default {
                     quantity: item.quantity
                 };
 
-                orderTotalAmount = orderTotalAmount + itemPrice;
+                orderTotalAmount = orderTotalAmount + (itemPrice * item.quantity);
             });
                 
             // Create order items
@@ -435,9 +448,9 @@ export default {
                 .transacting(transaction)
                 .insert({
                     type: body.payment_type,
-                    amount,
-                    resource: 'course',
-                    resource_id: course.id,
+                    amount: orderTotalAmount,
+                    resource: 'order',
+                    resource_id: orderId,
                     user_id: user.id,
                     reference: PRG.reference,
                 });
@@ -464,6 +477,8 @@ export default {
                       ]  
                     })
                 });
+
+                console.log(paystackResponse);
     
                 if (!paystackResponse.status) {
                     throw new Error(paystackResponse.message);
