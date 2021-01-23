@@ -4,6 +4,7 @@ exports.up = function(knex) {
       table.increments();
       table.string('title').notNullable();
       table.string('slug').notNullable();
+      table.text('body');
       table.integer('user_id').unsigned().notNullable();
       table.integer('responder_id').unsigned(); // An admin in the system who is first to respond
       table.timestamp('created_at').defaultTo(knex.fn.now());

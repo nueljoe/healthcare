@@ -8,6 +8,7 @@ import ProfileRoute from './ProfileRoute';
 import ProductCategoryRoute from './ProductCategoryRoute';
 import ProductRoute from './ProductRoute';
 import OrderRoute from './OrderRoute';
+import ForumDiscussionRoute from './ForumDiscussionRoute';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.use('/me', ProfileRoute);
 router.use('/product-categories', ProductCategoryRoute);
 router.use('/products', ProductRoute);
 router.use('/orders', OrderRoute);
+router.use('/discussions', ForumDiscussionRoute);
 
 router.use('/', (req, res) => {
     res.status(200).json({
