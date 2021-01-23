@@ -226,7 +226,7 @@ export default {
 
         try {
             const products = await knex
-                .select('name', 'slug', 'img_url', 'tags', 'price', 'discount', 'stock')
+                .select('id', 'name', 'slug', 'img_url', 'tags', 'price', 'discount', 'stock')
                 .from('products')
                 .orderBy('created_at', 'desc')
                 .offset(offset)

@@ -12,12 +12,15 @@ export default {
      * Fetches a paginated list orders
      */
     async fetchOrders(req, res, next) {
+        console.log(req.query);
         const { user, query: { limit, offset } } = req;
 
         try {
             if (user.label !== 'admin') {
                 throw new PermissionError();
             }
+
+            console.log(query.status);
 
             const whereClause = {};
 
@@ -34,7 +37,8 @@ export default {
                 .from('orders')
                 .whereNot({ ...whereClause })
                 .limit(limit)
-                .offset(offset);
+                .offset(offset)
+                .orderBy('created_at', 'desc');
 
             res.status(200).json({
                 status:'success',
@@ -53,7 +57,24 @@ export default {
         const { user, params } = req;
 
         try {
-            const order = await knex.first().from('orders').where('reference', params.reference);
+            const order = await knex
+                .first(
+                    'order.id as id',
+                    'order.reference as reference',
+                    'order.cancelled_at as cancelled_at',
+                    'order.delivered_at as delivered_at',
+                    'order.created_at as created_at',
+                    'payment.paid_at as paid_at',
+                    'payment.amount as total_amount',
+                    'payment.type as payment_type',
+                    'payment.reference as payment_reference',
+                    'payment.status as payment_status',
+                    )
+                .from('orders as order')
+                .innerJoin('payments as payment', 'payment.resource_id', 'order.id')
+                .where('order.reference', params.reference)
+                .andWhere('payment.resource', 'order')
+                .orderBy('created_at', 'desc');
 
             if (!order) {
                 throw new NotFoundError('Order not found');
@@ -72,7 +93,7 @@ export default {
             res.status(200).json({
                 status:'success',
                 message: 'Query successful',
-                data: orders
+                data: order
             });
         } catch (error) {
             next(error);
@@ -121,7 +142,7 @@ export default {
      * Marks an order as delivered
      */
     async markAsDelivered(req, res, next) {
-        const { user, params } = req;
+        const { transaction, user, params } = req;
 
         try {
             const order = await knex.first().from('orders').where('reference', params.reference);
@@ -142,15 +163,41 @@ export default {
                 throw new PermissionError('This order has already been delivered');
             }
 
-            order.items = await knex('orders')
+            // Update order payment if the payment type is cash
+            const orderPayment = await knex.first('id', 'type', 'paid_at')
+                .from('payments')
+                .where('resource', 'order')
+                .andWhere('resource_id', order.id)
+
+            if (!orderPayment) {
+                throw new Error('Something is not right. Unable to find payment data for this order');
+            }
+
+            if (orderPayment.type === 'cash') {
+                // It's rational to assume that payment is recieved before any admin marks an order as delivered in the case of a cash payment.
+                await knex('payments')
+                    .transacting(transaction)
+                    .update({ paid_at: new Date(), status: 'success' })
+                    .where('id', orderPayment.id);
+            } else {
+                if (!orderPayment.paid_at) {
+                    throw new PermissionError('Unable to mark as delivered because the order has not been paid for.');
+                }
+            }
+
+            await knex('orders')
+                .transacting(transaction)
                 .update({ delivered_at: new Date() })
-                .where('id', order.id)
+                .where('id', order.id);            
+
+            await transaction.commit();
 
             res.status(200).json({
                 status:'success',
-                message: `Order ${order.reference} was successfully marked as delivered`,s
+                message: `Order ${order.reference} was successfully marked as delivered`,
             });
         } catch (error) {
+            await transaction.rollback(error);
             next(error);
         }
     },
