@@ -9,6 +9,7 @@ import ProductCategoryRoute from './ProductCategoryRoute';
 import ProductRoute from './ProductRoute';
 import OrderRoute from './OrderRoute';
 import ForumDiscussionRoute from './ForumDiscussionRoute';
+import MessageThreadRoute from './MessageThreadRoute';
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.use('/product-categories', ProductCategoryRoute);
 router.use('/products', ProductRoute);
 router.use('/orders', OrderRoute);
 router.use('/discussions', ForumDiscussionRoute);
+router.use('/message-threads', MessageThreadRoute);
 
 router.use('/', (req, res) => {
     res.status(200).json({
