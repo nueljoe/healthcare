@@ -405,12 +405,16 @@ export default {
                 throw new ClientError('No item in cart!');
             }
 
+            
+            const PRG = new PaymentReferenceGenerator({ cart_items: cartItems });
+
             // Create an order
             const [ orderId ] = await knex('orders')
                 .transacting(transaction)
                 .insert({
                     user_id: user.id,
                     reference: `301${Date.now() * cartItems.length + Math.floor(Math.random() * 100000) + 1}`,
+                    payment_reference: PRG.reference
                 });
 
             const orderItems = [];
@@ -440,8 +444,6 @@ export default {
                 .transacting(transaction)
                 .delete()
                 .where('user_id', user.id);
-            
-            const PRG = new PaymentReferenceGenerator({ order_items: orderItems });
 
             // initialize a payment
             await knex('payments')
@@ -489,7 +491,7 @@ export default {
 
             res.status(201).json({
                 status: 'success',
-                message: 'Your order was placed successfully',
+                message: 'Your order placement was initiated successfully',
                 data: paystackResponse && paystackResponse.data
             });
         } catch (error) {
