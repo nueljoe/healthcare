@@ -499,4 +499,53 @@ export default {
             next(error);
         }
     },
+
+    /**
+     * Fetches a paginated list subscriptions belonging to the current user
+     */
+    async fetchUserSubscriptions(req, res, next) {
+        const { user, limit, offset } = req;
+
+        try {
+
+            const subscriptions = await knex
+                .select(
+                    'subscription.id as id',
+                    'subscription.billing_duration as billing_duration',
+                    'subscription.plan_id as plan_id',
+                    'subscription.user_id as user_id',
+                    'subscription.payment_reference as payment_reference',
+                    'subscription.expires_at as expires_at',
+                    'subscription.created_at as created_at',
+
+                    'profile.first_name as user_first_name',
+                    'profile.last_name as user_last_name',
+
+                    'plan.label as plan_label',
+
+                    'payment.id as payment_id',
+                    'payment.type as payment_type',
+                    'payment.amount as amount',
+                    'payment.status as payment_status',
+                    'payment.paid_at as paid_at',
+                )
+                .from('course_subscriptions as subscription')
+                .innerJoin('user_profiles as profile', 'profile.user_id', 'subscription.user_id')
+                .innerJoin('subscription_plans as plan', 'plan.id', 'subscription.plan_id')
+                .innerJoin('payments as payment', 'payment.reference', 'subscription.payment_reference')
+                .where('payment.resource', 'subscription')
+                .andWhere('subscription.user_id', user.id)
+                .limit(limit)
+                .offset(offset)
+                .orderBy('created_at', 'desc');
+
+            res.status(200).json({
+                status:'success',
+                message: 'Query successful',
+                data: subscriptions
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 };

@@ -3,8 +3,8 @@ exports.up = function(knex) {
   return knex.schema.createTable('payments', table => {
       table.increments();
       table.string('reference').notNullable();
-      table.string('type').notNullable();
-      table.string('resource').notNullable(); // The thing to be paid for. Ex: 'course', 'order'
+      table.string('type').notNullable(); // 'cash' or 'online'
+      table.string('resource').notNullable(); // The thing to be paid for. Ex: 'course', 'order', 'subscription'
       table.integer('resource_id').unsigned().notNullable(); // The ID of the thing to be paid for
       table.integer('user_id').unsigned().notNullable();
       table.float('amount').notNullable();

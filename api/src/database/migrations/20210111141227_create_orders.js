@@ -4,7 +4,7 @@ exports.up = function(knex) {
       table.increments();
       table.integer('user_id').unsigned().notNullable();
       table.string('reference').notNullable(); // An Order Number
-      table.string('payment_reference');
+      table.string('payment_reference').notNullable();
       table.timestamp('cancelled_at');
       table.timestamp('delivered_at');
       table.timestamp('created_at').defaultTo(knex.fn.now());
