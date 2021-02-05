@@ -23,27 +23,16 @@ export default {
   plugins: [],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
-  components: {
-    dirs: [
-      '~/components',
-      {
-        path: '~/components/input/',
-        prefix: 'Selfcare'
-      },
-      {
-        path: '~/components/inputLabel/',
-        prefix: 'Selfcare'
-      },
-      {
-        path: '~/components/vectors/',
-        prefix: 'Selfcare'
-      },
-      {
-        path: '~/components/button/',
-        prefix: 'Selfcare'
-      }
-    ]
-  },
+  components: [
+    {
+      path: '~/components/',
+      prefix: 'Selfcare',
+    },
+    {
+      path: '~/components/base',
+      prefix: 'Base',
+    },
+  ],
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
