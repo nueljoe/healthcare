@@ -3,28 +3,36 @@
     <div v-for="(field, index) in fields" :key="index">
       <slot :name="field.name"></slot>
     </div>
+    <slot />
   </form>
 </template>
 <script>
+import { required } from 'vuelidate/lib/validators'
 export default {
   props: {
     fields: {
       required: true,
       default: () => [],
     },
-    // data: {
-    //   required: true,
-    //   default: () => {},
-    // },
+    data: {
+      required: true,
+      default: () => {},
+    },
   },
   watch: {
     data: {
       handler(value) {
-        console.log(value, this.$listeners, 'value')
-        // this.$set('fieldData',)
+        Object.keys(this.validation).forEach((item) => {
+          this.$set(this.fieldData, item, value[item])
+        })
       },
       deep: true,
     },
+  },
+  validations() {
+    return {
+      fieldData: this.validation,
+    }
   },
   computed: {
     patchedListeners() {
@@ -39,19 +47,20 @@ export default {
   },
   data() {
     return {
-      validations: {},
+      validation: {},
       fieldData: {},
     }
   },
   methods: {
     submit(e) {
       e && e.preventDefault()
-      console.log(e, 'event')
+      this.$v.fieldData.$touch()
+      console.log(this.$v.fieldData.$invalid)
     },
   },
   mounted() {
-    this.fields.forEach((element) => {
-      this.validations[element.name] = element.validations
+    this.fields.forEach((item) => {
+      this.validation[item.name] = { required }
     })
   },
 }

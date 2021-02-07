@@ -27,47 +27,48 @@
           <template #email>
             <selfcare-input-label label="Email" />
             <div class="mt-1">
-              <selfcare-input v-model="login.email" />
+              <selfcare-input v-model="login.email">
+                <template #error> Required </template>
+              </selfcare-input>
             </div>
           </template>
 
           <!-- password field -->
-          <template #password>
+          <template #password="{ inputAttr }">
             <selfcare-input-label label="Password" />
             <div class="mt-1">
-              <selfcare-input v-model="login.password" />
+              <selfcare-input v-model="login.password" v-bind="inputAttr">
+                <template #error> Required </template>
+              </selfcare-input>
             </div>
           </template>
-
-          <template #remain>
-            <div class="flex justify-between">
-              <!-- remember me -->
-              <div class="flex items-center">
-                <selfcare-input
-                  id="remember_me"
-                  name="remember_me"
-                  type="checkbox"
-                />
-                <selfcare-input-label
-                  label="Remember me"
-                  inputFor="remember_me"
-                />
-              </div>
-
-              <!-- forgot password -->
-              <div class="text-sm">
-                <nuxt-link
-                  :to="{ path: '/auth/forgot-password' }"
-                  class="font-medium text-blue-700 hover:text-blue-500 hover:underline"
-                >
-                  Forgot your password?
-                </nuxt-link>
-              </div>
+          <div class="flex justify-between">
+            <!-- remember me -->
+            <div class="flex items-center">
+              <selfcare-input
+                id="remember_me"
+                name="remember_me"
+                type="checkbox"
+              />
+              <selfcare-input-label
+                label="Remember me"
+                inputFor="remember_me"
+              />
             </div>
-            <div>
-              <selfcare-button button-label="sign in" />
+
+            <!-- forgot password -->
+            <div class="text-sm">
+              <nuxt-link
+                :to="{ path: '/auth/forgot-password' }"
+                class="font-medium text-blue-700 hover:text-blue-500 hover:underline"
+              >
+                Forgot your password?
+              </nuxt-link>
             </div>
-          </template>
+          </div>
+          <div>
+            <selfcare-button button-label="sign in" />
+          </div>
         </base-form>
       </div>
     </div>
@@ -75,21 +76,22 @@
 </template>
 
 <script>
+import { required } from 'vuelidate/lib/validators'
 export default {
   layout: 'auth',
   data() {
     const fields = [
       {
         name: 'email',
-        validations: ['required'],
+        validations: {
+          required: () => required,
+        },
       },
       {
         name: 'password',
-        validations: ['required'],
-      },
-      {
-        name: 'remain',
-        validations: ['required'],
+        validations: {
+          required: () => required,
+        },
       },
     ]
     return {
@@ -99,6 +101,16 @@ export default {
         password: '',
       },
     }
+  },
+  validations: {
+    login: {
+      email: {
+        required,
+      },
+      password: {
+        required,
+      },
+    },
   },
   methods: {
     submitForm() {
