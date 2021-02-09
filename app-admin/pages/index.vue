@@ -1,68 +1,122 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">frontend</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
+  <div
+    class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-100"
+  >
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <img
+        class="mx-auto h-16 w-auto"
+        src="~assets/images/logo.png"
+        alt="Workflow"
+      />
+    </div>
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div class="mb-8">
+          <h2 class="mt-6 text-2xl font-bold text-gray-800">Welcome Back</h2>
+          <p class="font-normal text-base text-gray-600">
+            Sign in to your account
+          </p>
+        </div>
+        <base-form
+          class="space-y-6"
+          :fields="fields"
+          :data="login"
+          @submit.prevent="submitForm"
         >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+          <!-- email field -->
+          <template #email>
+            <selfcare-input-label label="Email" />
+            <div class="mt-1">
+              <selfcare-input v-model="login.email">
+                <template #error> Required </template>
+              </selfcare-input>
+            </div>
+          </template>
+
+          <!-- password field -->
+          <template #password="{ inputAttr }">
+            <selfcare-input-label label="Password" />
+            <div class="mt-1">
+              <selfcare-input v-model="login.password" v-bind="inputAttr">
+                <template #error> Required </template>
+              </selfcare-input>
+            </div>
+          </template>
+          <div class="flex justify-between">
+            <!-- remember me -->
+            <div class="flex items-center">
+              <selfcare-input
+                id="remember_me"
+                name="remember_me"
+                type="checkbox"
+              />
+              <selfcare-input-label
+                label="Remember me"
+                inputFor="remember_me"
+              />
+            </div>
+
+            <!-- forgot password -->
+            <div class="text-sm">
+              <nuxt-link
+                :to="{ path: '/auth/forgot-password' }"
+                class="font-medium text-blue-700 hover:text-blue-500 hover:underline"
+              >
+                Forgot your password?
+              </nuxt-link>
+            </div>
+          </div>
+          <div>
+            <selfcare-button button-label="sign in" />
+          </div>
+        </base-form>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+import { required } from 'vuelidate/lib/validators'
+export default {
+  layout: 'auth',
+  data() {
+    const fields = [
+      {
+        name: 'email',
+        validations: {
+          required: () => required,
+        },
+      },
+      {
+        name: 'password',
+        validations: {
+          required: () => required,
+        },
+      },
+    ]
+    return {
+      fields,
+      login: {
+        email: '',
+        password: '',
+      },
+    }
+  },
+  validations: {
+    login: {
+      email: {
+        required,
+      },
+      password: {
+        required,
+      },
+    },
+  },
+  methods: {
+    async submitForm() {
+      const res = await this.$repos.auth.login(this.login)
+      console.log(res)
+    },
+  },
+}
 </script>
-
-<style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-@apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
