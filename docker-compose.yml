@@ -1,0 +1,68 @@
+version: "3.3"
+
+services:
+  # healthcare:
+  #   image: healthcare
+  #   container_name: healthcare
+  #   restart: always
+  #   build:
+  #     context: ./api
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./services/api:/usr/src/services/api
+  #     - "/usr/src/services/api/node_modules"
+  #   ports:
+  #     - "1379:8080"
+  #     - "9999:9999"
+  #   depends_on:
+  #     - mysql
+  #   networks:
+  #     - healthcare-network
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=1
+
+  mysql:
+    image: mysql/mysql-server:5.7.22
+    container_name: mysql
+    ports:
+      - 3306:3306
+    expose:
+      # Opens port 1380 on the container
+      - "3306"
+    command: --innodb_use_native_aio=0 --socket=/tmp/mysql.sock --bind_address=0.0.0.0
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_HOST: "mysql"
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "healthcare"
+      DATABASE_HOST: mysql
+      MYSQL_USER: "healthcare"
+      MYSQL_PASSWORD: "123456"
+      MYSQL_LOG_CONSOLE: "true"
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-fk", "tcp://localhost:3306"]
+      interval: 300s
+      timeout: 400s
+      retries: 10
+    networks:
+      - healthcare-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.0.1
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "1382:80"
+    depends_on:
+      - mysql
+    networks:
+      - healthcare-network
+
+networks:
+  healthcare-network:
+    driver: bridge

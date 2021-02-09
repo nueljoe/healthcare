@@ -3,7 +3,7 @@
     :type="buttonType"
     class="selfcare-button"
     :class="buttonClass"
-    @click="buttonClicked"
+    v-on="$listeners"
   >
     {{ buttonLabel }}
   </button>

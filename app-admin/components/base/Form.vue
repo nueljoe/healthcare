@@ -55,7 +55,11 @@ export default {
     submit(e) {
       e && e.preventDefault()
       this.$v.fieldData.$touch()
-      console.log(this.$v.fieldData.$invalid)
+      if (this.$v.fieldData.$invalid) {
+        return
+      } else {
+        this.$emit('submit', e)
+      }
     },
   },
   mounted() {

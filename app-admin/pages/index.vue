@@ -113,8 +113,9 @@ export default {
     },
   },
   methods: {
-    submitForm() {
-      console.log('here')
+    async submitForm() {
+      const res = await this.$repos.auth.login(this.login)
+      console.log(res)
     },
   },
 }
