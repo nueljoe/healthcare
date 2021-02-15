@@ -717,7 +717,7 @@ export default {
                 throw new PermissionError();
             }
 
-            const lecture = await knex.first().from('course_modules').where({ id: params.lectureId });
+            const lecture = await knex.first().from('course_lectures').where({ id: params.lectureId });
 
             if (!lecture) {
                 throw new NotFoundError('Lecture not found');
@@ -800,7 +800,7 @@ export default {
                 return res.status(200).json(genericSuccessResponse);
              }
 
-            await knex('course_modules')
+            await knex('course_lectures')
                 .transacting(trx)
                 .where('id', params.lectureId)
                 .update({
@@ -930,8 +930,7 @@ export default {
             }
 
             const lectures = await knex.select().from('course_lectures')
-                .where('course_id', course.id)
-                .andWhere('module_id', module.id)
+                .where({ module_id: courseModule.id.toString() })
                 .orderBy('position', 'asc')
 
             res.status(200).json({
@@ -1061,6 +1060,87 @@ export default {
             await transaction.rollback(error);
             next(error);
         }
+    },
+
+    /**
+     * Tracks the extent to which the user has watched/completed a given lesson
+     * @param { ILessonCompletionUpdateOptions } body - A object containing options for updating a lesson's completion state
+     * @param { string } user.id - The ID of the user
+     * @param { string } body.lessonId - The ID of a lesson document
+     * @param { string } body.currentPosition - The current position of the video watched by the user
+     */
+    async trackLesson(req, res, next) {
+        const { user, params } = req;
+        const trx = await knex.transaction();
+
+        try {
+            let trackedLesson;
+            let enrolledCourseId;
+
+            trackedLesson = await knex.first().where({
+                lesson_id: params.lessonId,
+                userId: user.id,
+            })
+    
+            const lecture = await knex.first()
+                .from('course_lectures')
+                .where('id', params.lessonId);
+
+            if (!trackedLesson) {
+                // find the lesson by ID and ensure ot actually exists. Also, we need the courseId on the lesson document to enroll the user into the course
+
+                if (!lecture) {
+                    throw new NotFoundException('Lesson can not be identified');
+                }
+
+                let resolvedWatchedDuration = '0.0';
+                if (body.watchedDuration) {
+                    resolvedWatchedDuration = this.resolveWatchedDuration(body.watchedDuration, lecture.duration);
+                }
+
+                // next, create the tracked lesson
+                trackedLesson = await this.create(
+                    user.id,
+                    body.lessonId,
+                    enrolledCourseId,
+                    resolvedWatchedDuration
+                );
+            } else {
+                if (!body.watched_duration) {
+                    throw new BadRequestException('A watched duration must be provided');
+                }
+
+                if (!trackedLesson.is_complete) {
+                    enrolledCourseId = trackedLesson.enrollment_id;
+
+                    // Update the current position of the lesson if the lesson is not already marked as completed. TAKE NOTE
+                    await knex('enrolled_course_lectures')
+                        .transacting(trx)
+                        .update({
+                            watched_duration: this.resolveCurrentPosition(body.watched_duration, trackedLesson.lesson.duration),
+                            is_complete: this.getIsLessonCompleted(body.watched_duration, trackedLesson.lesson.duration)
+                        }).where({ 
+                            enrollment_id: enrolledCourseId,
+                            lessonId: body.lessonId
+                        });
+                }
+            }
+
+            this.lessonCourseCompletionQueue.add(
+                { enrollment_id: trackedLesson.enrollment_id, userId: user.id }
+            );
+
+            await trx.commit();
+
+            return res.status(200).json({
+                status: 'success',
+                message: 'Lecture progress was updated successfully'
+            });
+        } catch (error) {
+            await trx.rollback(error);
+            throw error;            
+        }
+        
     },
 
     // ************************************************************************* //
