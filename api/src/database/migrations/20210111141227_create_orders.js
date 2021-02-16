@@ -5,13 +5,13 @@ exports.up = function(knex) {
       table.integer('user_id').unsigned().notNullable();
       table.string('reference').notNullable(); // An Order Number
       table.string('payment_reference').notNullable();
-      table.timestamp('cancelled_at');
-      table.timestamp('delivered_at');
+      table.timestamp("cancelled_at").nullable();
+      table.timestamp("delivered_at").nullable();
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
 };
 
-exports.down = function(knex) {
-  return knex.schema.dropTableIfExists('orders');
+exports.down = function (knex) {
+  return knex.schema.dropTableIfExists("orders");
 };
