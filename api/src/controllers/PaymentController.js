@@ -46,6 +46,8 @@ export default {
                             course_id: payment.resource_id,
                             payment_reference:  payment.reference
                         });
+                } else if (payment.resource === 'subscription') {
+                    // update the update the 
                 } else {
                     // update the status of an order
                 }

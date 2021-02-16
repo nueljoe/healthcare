@@ -10,14 +10,19 @@ import ProductRoute from './ProductRoute';
 import OrderRoute from './OrderRoute';
 import ForumDiscussionRoute from './ForumDiscussionRoute';
 import MessageThreadRoute from './MessageThreadRoute';
+import SubscriptionPlanRoute from './SubscriptionPlanRoute';
+import CourseSubscriptionRoute from './CourseSubscriptionRoute';
 
 const router = Router();
 
 router.use('/auth', AuthRoute);
 router.use('/subscriptions', SubscriptionRoute);
+router.use('/subscription-plans', SubscriptionPlanRoute);
+router.use('/course-subscriptions', CourseSubscriptionRoute);
 router.use('/course-categories', CourseCategoryRoute);
 router.use('/courses', CourseRoute);
 router.use('/payments', PaymentRoute);
+
 router.use('/me', ProfileRoute);
 router.use('/product-categories', ProductCategoryRoute);
 router.use('/products', ProductRoute);
