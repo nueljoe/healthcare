@@ -8,8 +8,8 @@ import { ClientError, NotFoundError, PermissionError } from '../errors';
 
 export default {
   /**
-     * Creates a new course
-     */
+   * Creates a new course
+   */
   async createCourse(req, res, next) {
     const { user, body } = req;
 
@@ -1062,12 +1062,38 @@ export default {
   },
 
   /**
-     * Tracks the extent to which the user has watched/completed a given lesson
-     * @param { ILessonCompletionUpdateOptions } body - A object containing options for updating a lesson's completion state
-     * @param { string } user.id - The ID of the user
-     * @param { string } body.lessonId - The ID of a lesson document
-     * @param { string } body.currentPosition - The current position of the video watched by the user
-     */
+   * Resolves the value of the current position of a user on a lecture
+   *
+   * @param { string } newWatchedDuration - The current duration the user has watched
+   * @param { string } lectureDuration - The total duration of the lecture
+   */
+  resolveWatchedDuration(newWatchedDuration, lectureDuration) {
+    if (parseFloat(newWatchedDuration) >= parseFloat(lectureDuration)) {
+      return lectureDuration;
+    }
+
+    return newWatchedDuration;
+  },
+
+  /**
+   * Runs a comparison between the current duration a lecture and the total duration
+   * of the lecture. Returns true if the current duration is greater than or equal to
+   * the duration of the lecture. Otherwise, it returns false.
+   *
+   * @param { string } newWatchedDuration - The current duration the user has watched
+   * @param { string } lectureDuration - The total duration of the lecture
+   */
+  getIsLectureCompleted(newWatchedDuration, lectureDuration) {
+    return parseFloat(newWatchedDuration) >= parseFloat(lectureDuration);
+  },
+
+  /**
+   * Tracks the extent to which the user has watched/completed a given lesson
+   * @param { ILessonCompletionUpdateOptions } body - A object containing options for updating a lesson's completion state
+   * @param { string } user.id - The ID of the user
+   * @param { string } body.lessonId - The ID of a lesson document
+   * @param { string } body.currentPosition - The current position of the video watched by the user
+   */
   async trackLesson(req, res, next) {
     const {
       user, transaction, body, params
@@ -1117,7 +1143,8 @@ export default {
             user_id: user.id,
             lesson_id: params.lessonId,
             enrollment_id: enrolledCourse.id,
-            watched_duration: resolvedWatchedDuration
+            watched_duration: resolvedWatchedDuration,
+            is_completed: this.getIsLectureCompleted(body.watched_duration, lecture.duration)
           });
       } else {
         if (!watchedDurationIsValid) {
@@ -1125,12 +1152,12 @@ export default {
         }
 
         const payloadForUpdate = {
-          watched_duration: this.resolveCurrentPosition(body.watched_duration, lecture.duration),
+          watched_duration: this.resolveWatchedDuration(body.watched_duration, lecture.duration),
           updated_at: new Date()
         };
 
         if (!trackedLesson.is_completed) {
-          payloadForUpdate.is_completed = this.getIsLessonCompleted(body.watched_duration, lecture.duration);
+          payloadForUpdate.is_completed = this.getIsLectureCompleted(body.watched_duration, lecture.duration);
         }
 
         await knex('enrolled_course_lectures')
