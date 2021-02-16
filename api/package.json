@@ -84,6 +84,7 @@
     "sharp": "^0.27.0",
     "sinon": "^9.0.1",
     "slugify": "^1.4.6",
+    "socket.io": "^3.1.0",
     "supertest": "^4.0.2",
     "xss-clean": "^0.1.1"
   },
