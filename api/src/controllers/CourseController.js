@@ -1070,77 +1070,89 @@ export default {
      * @param { string } body.currentPosition - The current position of the video watched by the user
      */
     async trackLesson(req, res, next) {
-        const { user, params } = req;
-        const trx = await knex.transaction();
+        const { user, transaction, body, params } = req;
 
         try {
-            let trackedLesson;
-            let enrolledCourseId;
-
-            trackedLesson = await knex.first().where({
-                lesson_id: params.lessonId,
-                userId: user.id,
-            })
-    
+            // find the lesson by ID and ensure it actually exists. Also, we need the course_id on the lesson record.
             const lecture = await knex.first()
                 .from('course_lectures')
                 .where('id', params.lessonId);
+        
+            if (!lecture) {
+                throw new NotFoundException('Lesson can not be identified');
+            }
 
+            const watchedDurationIsValid = body.watched_duration && parseFloat(body.watched_duration);
+
+            // Check for a similar record in the enrolled_course_lectures table
+            let trackedLesson = await knex.first()
+                .from('enrolled_course_lectures')
+                .where({
+                    lesson_id: params.lessonId,
+                    userId: user.id,
+                })
+            
             if (!trackedLesson) {
-                // find the lesson by ID and ensure ot actually exists. Also, we need the courseId on the lesson document to enroll the user into the course
 
-                if (!lecture) {
-                    throw new NotFoundException('Lesson can not be identified');
+                const enrolledCourse = await knex.first()
+                    .from('enrolled_courses')
+                    .where({
+                        course_id: lecture.course_id,
+                        user_id: user.id,
+                    })
+
+                if (!enrolledCourse) {
+                    throw new PermissionError('You are not enrolled in this course!');
                 }
 
                 let resolvedWatchedDuration = '0.0';
-                if (body.watchedDuration) {
-                    resolvedWatchedDuration = this.resolveWatchedDuration(body.watchedDuration, lecture.duration);
+                if (watchedDurationIsValid) {
+                    resolvedWatchedDuration = this.resolveWatchedDuration(body.watched_duration, lecture.duration);
                 }
 
                 // next, create the tracked lesson
-                trackedLesson = await this.create(
-                    user.id,
-                    body.lessonId,
-                    enrolledCourseId,
-                    resolvedWatchedDuration
-                );
+                trackedLesson = await knex('enrolled_course_lectures')
+                    .transacting(transaction)
+                    .insert({
+                        user_id: user.id,
+                        lesson_id: params.lessonId,
+                        enrollment_id: enrolledCourse.id,
+                        watched_duration: resolvedWatchedDuration
+                    });
             } else {
-                if (!body.watched_duration) {
+                if (!watchedDurationIsValid) {
                     throw new BadRequestException('A watched duration must be provided');
                 }
 
-                if (!trackedLesson.is_complete) {
-                    enrolledCourseId = trackedLesson.enrollment_id;
-
-                    // Update the current position of the lesson if the lesson is not already marked as completed. TAKE NOTE
-                    await knex('enrolled_course_lectures')
-                        .transacting(trx)
-                        .update({
-                            watched_duration: this.resolveCurrentPosition(body.watched_duration, trackedLesson.lesson.duration),
-                            is_complete: this.getIsLessonCompleted(body.watched_duration, trackedLesson.lesson.duration)
-                        }).where({ 
-                            enrollment_id: enrolledCourseId,
-                            lessonId: body.lessonId
-                        });
+                const payloadForUpdate = {
+                    watched_duration: this.resolveCurrentPosition(body.watched_duration, lesson.duration),
+                    updated_at: new Date()
                 }
+
+                if (!trackedLesson.is_completed) {
+                    payloadForUpdate.is_completed = this.getIsLessonCompleted(body.watched_duration, lesson.duration)
+                }
+
+                await knex('enrolled_course_lectures')
+                    .transacting(transaction)
+                    .update(payloadForUpdate)
+                    .where({ id: trackedLesson.id });
             }
 
-            this.lessonCourseCompletionQueue.add(
-                { enrollment_id: trackedLesson.enrollment_id, userId: user.id }
-            );
+            // this.lessonCourseCompletionQueue.add(
+            //     { enrollment_id: trackedLesson.enrollment_id, userId: user.id }
+            // );
 
-            await trx.commit();
+            await transaction.commit();
 
             return res.status(200).json({
                 status: 'success',
                 message: 'Lecture progress was updated successfully'
             });
         } catch (error) {
-            await trx.rollback(error);
-            throw error;            
+            await transaction.rollback(error);
+            next(error);            
         }
-        
     },
 
     // ************************************************************************* //

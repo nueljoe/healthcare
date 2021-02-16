@@ -6,7 +6,7 @@ exports.up = function(knex) {
       table.integer('lecture_id').unsigned().notNullable();
       table.integer('user_id').unsigned().notNullable();
       table.string('watched_duration');
-      table.boolean('is_complete').defaultTo(false);
+      table.boolean('is_completed').defaultTo(false);
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').defaultTo(knex.fn.now());
       

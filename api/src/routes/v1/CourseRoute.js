@@ -5,6 +5,7 @@ import initiateTransaction from '../../middlewares/initiateTransaction';
 import CourseValidator from '../../validators/course';
 import CourseModuleValidator from '../../validators/courseModule';
 import CourseLectureValidator from '../../validators/courseLecture';
+import TrackedLectureValidator from '../../validators/trackedLecture';
 import CourseController from '../../controllers/CourseController';
 
 const router = Router();
@@ -51,6 +52,9 @@ router.route('/:slug/lectures/:lectureId')
 
 router.route('/:slug/lectures/:lectureId/status')
     .patch(authenticate, CourseLectureValidator.validateBodyOnStatusUpdate, CourseController.updateLectureStatus);
+
+router.route('/:slug/lectures/:lectureId/progress')
+    .patch(authenticate, TrackedLectureValidator.validateBodyOnTrack, CourseController.updateLectureStatus);
 
 router.route('/:slug/modules/:moduleId/lectures/:lectureId/position')
     .patch(authenticate, CourseLectureValidator.validateBodyOnPositionUpdate, CourseController.updateLecturePosition);
