@@ -8,9 +8,10 @@ exports.up = function(knex) {
     table.text('text');
     table.string('video_url');
     table.string('downloadable_file_url');
+    table.string('duration').notNullable();
     table.integer('position').unsigned().notNullable();
     table.boolean('allow_preview').defaultTo(false);
-    table.boolean('is_published').defaultTo(true);
+    table.boolean('is_published').defaultTo(false);
     table.integer('course_id').unsigned().notNullable();
     table.integer('module_id').unsigned().notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());

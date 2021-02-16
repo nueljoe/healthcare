@@ -5,8 +5,8 @@ const schemaOnCreate = Joi.object({
     title: Joi.string().required(),
     overview: Joi.string().allow(''),
     text: Joi.string().allow(''),
-    video: Joi.binary().allow(''),
-    downladable_file: Joi.binary().allow(''),
+    video_url: Joi.binary().allow(''),
+    downloadable_file_url: Joi.binary().allow(''),
     allow_preview: Joi.boolean(),
     is_published: Joi.boolean(),
 });
@@ -15,8 +15,8 @@ const schemaOnUpdate = Joi.object({
     title: Joi.string(),
     overview: Joi.string().allow(''),
     text: Joi.string().allow(''),
-    video: Joi.binary().allow(''),
-    downladable_file: Joi.binary().allow(''),
+    video_url: Joi.binary().allow(''),
+    downloadable_file_url: Joi.binary().allow(''),
     allow_preview: Joi.boolean(),
     is_published: Joi.boolean(),
 });
