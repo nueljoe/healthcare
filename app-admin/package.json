@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "Selfcare | Admin",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -13,7 +13,8 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.12.5",
     "core-js": "^3.8.3",
-    "nuxt": "^2.14.12"
+    "nuxt": "^2.14.12",
+    "vuelidate": "^0.7.6"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^5.0.0",
