@@ -28,7 +28,9 @@
             <selfcare-input-label label="Email" />
             <div class="mt-1">
               <selfcare-input v-model="login.email">
-                <template #error> Required </template>
+                <template #error> 
+                  <ErrorMessage message="Email is required" />
+                </template>
               </selfcare-input>
             </div>
           </template>
@@ -38,7 +40,9 @@
             <selfcare-input-label label="Password" />
             <div class="mt-1">
               <selfcare-input v-model="login.password" v-bind="inputAttr">
-                <template #error> Required </template>
+                <template #error>
+                  <ErrorMessage message="Password is required" />
+                </template>
               </selfcare-input>
             </div>
           </template>
@@ -76,9 +80,13 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators';
+import ErrorMessage from "@/components/errorMessage/ErrorMessage"
 export default {
   layout: 'auth',
+  components: {
+    ErrorMessage
+  },
   data() {
     const fields = [
       {
@@ -114,9 +122,13 @@ export default {
   },
   methods: {
     async submitForm() {
-      const res = await this.$repos.auth.login(this.login)
-      console.log(res)
+      try {
+        const res = await this.$repos.auth.login(this.login)
+        console.log(res)
+      } catch (loginerror) {
+        console.log('loginerror>>>', loginerror)
+      }
     },
-  },
+  }
 }
 </script>
