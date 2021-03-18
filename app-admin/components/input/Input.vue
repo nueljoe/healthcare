@@ -9,6 +9,7 @@
       ]"
       v-on="patchedListeners"
       v-bind="patchedAttrs"
+      :type="type"
     />
     <slot name="error" v-if="$v.tmpValue.$error" />
   </div>
