@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex overflow-hidden bg-gray-100">
+  <div class="h-screen flex overflow-hidden bg-white">
     <TheSideBar />
     <div class="flex-1 overflow-auto focus:outline-none" tabindex="0">
       <TheTopbar />
@@ -20,3 +20,9 @@ export default {
   }
 }
 </script>
+
+<style>
+*, body, html {
+  box-sizing: border-box;
+}
+</style>
