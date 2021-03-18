@@ -22,6 +22,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/vuelidate.js', mode: 'client' },
+    { src: '~/plugins/core-components', mode: 'client' },
+    { src: '~/plugins/vue-cookies.js', mode: 'client' },
     { src: '~/plugins/repositories.js', mode: 'client' },
   ],
 
