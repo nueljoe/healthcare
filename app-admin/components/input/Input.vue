@@ -86,30 +86,3 @@ export default {
 }
 </script>
 
-<style scoped>
-.selfcare-input {
-  @apply appearance-none;
-  @apply block;
-  @apply w-full;
-  @apply px-3;
-  @apply py-2;
-  @apply border;
-  @apply border-gray-300;
-  @apply rounded-md;
-  @apply shadow-sm;
-}
-.selfcare-input__checkbox {
-  @apply h-4;
-  @apply w-4;
-  @apply text-indigo-600;
-  @apply border-gray-300;
-  @apply rounded;
-  @apply mr-1;
-}
-
-.selfcare-input:focus {
-  @apply outline-none;
-  @apply border-blue-700;
-}
-</style>
-
