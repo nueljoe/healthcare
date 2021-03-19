@@ -24,6 +24,8 @@ export default {
     { src: '~/plugins/vuelidate.js', mode: 'client' },
     { src: '~/plugins/core-components', mode: 'client' },
     { src: '~/plugins/vue-cookies.js', mode: 'client' },
+    { src: '~/plugins/vue-croppa.js', mode: 'client' },
+    { src: '~/plugins/vue-select.js', mode: 'client' },
     { src: '~/plugins/repositories.js', mode: 'client' },
   ],
 
