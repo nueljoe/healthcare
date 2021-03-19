@@ -47,8 +47,17 @@
                 :to="({path: '/courses'})"
                 class="selfcare-nav__menu"
               >
-                <categories-icon :svgClass="'text-gray-400'" />
+                <courses-icon :svgClass="'text-gray-400'" />
                 Courses
+              </nuxt-link>
+
+              <!-- courses -->
+              <nuxt-link 
+                :to="({path: '/categories'})"
+                class="selfcare-nav__menu"
+              >
+                <categories-icon :svgClass="'text-gray-400'" />
+                Categories
               </nuxt-link>
             </nav>
           </div>
@@ -88,6 +97,7 @@
 const DashboardIcon = () => import('@/components/vectors/dashboard')
 const UsersIcon = () => import('@/components/vectors/users')
 const LeaderBoardIcon = () => import('@/components/vectors/leaderboard')
+const CoursesIcon = () => import('@/components/vectors/courses')
 const CategoriesIcon = () => import('@/components/vectors/categories')
 const QuestionsIcon = () => import('@/components/vectors/questions')
 const SettingsIcon = () => import('@/components/vectors/settings')
@@ -98,6 +108,7 @@ export default {
     DashboardIcon,
     LeaderBoardIcon,
     UsersIcon,
+    CoursesIcon,
     CategoriesIcon,
     QuestionsIcon,
     SettingsIcon,
