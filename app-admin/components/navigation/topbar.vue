@@ -8,10 +8,11 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
       </svg>
     </button>
-    <!-- Search bar -->
-    <div class="flex-1 px-4 flex justify-between items-center sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
+
+    <!-- current route -->
+    <div class="flex-1 px-4 flex justify-between items-center sm:px-6 lg:max-w-auto lg:mx-auto lg:px-8">
       <div class="flex-1 flex">
-       <p class="font-medium text-2xl text-gray-700">Dashboard</p>
+       <p class="font-medium text-2xl text-gray-700 capitalize">{{route_name}}</p>
       </div>
 
       <!-- notifications -->
@@ -102,8 +103,14 @@
 export default {
   data() {
     return {
-      showUserDropdown: false
+      showUserDropdown: false,
+      // route_name: ''
     }
   },
+  computed: {
+    route_name() {
+      return this.$route.name
+    }
+  }
 }
 </script>

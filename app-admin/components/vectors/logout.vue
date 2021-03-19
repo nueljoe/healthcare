@@ -1,6 +1,6 @@
 <template>
   <svg 
-    class="mr-4 h-6 w-6 text-blue-300 transition ease-in-out duration-150" 
+    :class="`mr-4 h-6 w-6 ${svgClass} transition ease-in-out duration-150`" 
     fill="none" 
     stroke="currentColor" 
     viewBox="0 0 24 24" 
@@ -15,3 +15,13 @@
     </path>
   </svg>
 </template>
+
+<script>
+export default {
+  props: {
+    svgClass: {
+      type: String
+    }
+  }
+}
+</script>

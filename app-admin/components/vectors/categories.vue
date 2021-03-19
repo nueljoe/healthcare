@@ -1,15 +1,28 @@
 <template>
   <svg 
-    class="mr-4 h-6 w-6 text-blue-300 group-hover:text-blue-300 group-focus:text-blue-300 transition ease-in-out duration-150" 
+    :class="`mr-4 h-6 w-6 ${svgClass} transition ease-in-out duration-150`" 
     fill="none" 
+    stroke="currentColor" 
     viewBox="0 0 24 24" 
-    stroke="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
   >
     <path 
       stroke-linecap="round" 
       stroke-linejoin="round" 
       stroke-width="2" 
-      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" 
-    />
+      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+    >
+    </path>
   </svg>
 </template>
+
+
+<script>
+export default {
+  props: {
+    svgClass: {
+      type: String
+    }
+  }
+}
+</script>

@@ -4,7 +4,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'frontend',
+    title: 'Selfcare | Admin',
     htmlAttrs: {
       lang: 'en',
     },
@@ -22,6 +22,10 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/vuelidate.js', mode: 'client' },
+    { src: '~/plugins/core-components', mode: 'client' },
+    { src: '~/plugins/vue-cookies.js', mode: 'client' },
+    { src: '~/plugins/vue-croppa.js', mode: 'client' },
+    { src: '~/plugins/vue-select.js', mode: 'client' },
     { src: '~/plugins/repositories.js', mode: 'client' },
   ],
 

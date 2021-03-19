@@ -1,22 +1,30 @@
 <template>
   <div
-    class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-100"
+    class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-auth"
   >
+    <Notification
+      :show="showNotification"
+      :notificationType="notificationType"
+      :message="notificationMessage"
+    />
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <img
         class="mx-auto h-16 w-auto"
-        src="~assets/images/logo.png"
+        src="~/assets/images/logo.png"
         alt="Workflow"
       />
     </div>
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div
+        class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-300"
+      >
         <div class="mb-8">
-          <h2 class="mt-6 text-2xl font-bold text-gray-800">Welcome Back</h2>
+          <h2 class="mt-4 text-2xl font-bold text-gray-800">Welcome Back</h2>
           <p class="font-normal text-base text-gray-600">
             Sign in to your account
           </p>
         </div>
+
         <base-form
           class="space-y-6"
           :fields="fields"
@@ -27,8 +35,10 @@
           <template #email>
             <selfcare-input-label label="Email" />
             <div class="mt-1">
-              <selfcare-input v-model="login.email">
-                <template #error> Required </template>
+              <selfcare-input v-model="login.email" :type="'email'">
+                <template #error>
+                  <ErrorMessage message="Email is required" />
+                </template>
               </selfcare-input>
             </div>
           </template>
@@ -37,26 +47,23 @@
           <template #password="{ inputAttr }">
             <selfcare-input-label label="Password" />
             <div class="mt-1">
-              <selfcare-input v-model="login.password" v-bind="inputAttr">
-                <template #error> Required </template>
+              <selfcare-input
+                v-model="login.password"
+                :type="'password'"
+                v-bind="inputAttr"
+              >
+                <template #error>
+                  <ErrorMessage message="Password is required" />
+                </template>
               </selfcare-input>
             </div>
           </template>
-          <div class="flex justify-between">
-            <!-- remember me -->
-            <div class="flex items-center">
-              <selfcare-input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-              />
-              <selfcare-input-label
-                label="Remember me"
-                inputFor="remember_me"
-              />
-            </div>
+          <div>
+            <selfcare-button button-label="sign in" />
+          </div>
 
-            <!-- forgot password -->
+          <!-- forgot password -->
+          <div class="flex justify-end">
             <div class="text-sm">
               <nuxt-link
                 :to="{ path: '/auth/forgot-password' }"
@@ -66,9 +73,6 @@
               </nuxt-link>
             </div>
           </div>
-          <div>
-            <selfcare-button button-label="sign in" />
-          </div>
         </base-form>
       </div>
     </div>
@@ -76,9 +80,13 @@
 </template>
 
 <script>
-// import { required } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
+import ErrorMessage from '@/components/errorMessage/ErrorMessage'
 export default {
   layout: 'auth',
+  components: {
+    ErrorMessage,
+  },
   data() {
     const fields = [
       {
@@ -100,6 +108,9 @@ export default {
         email: '',
         password: '',
       },
+      showNotification: false,
+      notificationType: 'success',
+      notificationMessage: '',
     }
   },
   validations: {
@@ -114,8 +125,21 @@ export default {
   },
   methods: {
     async submitForm() {
-      const res = await this.$repos.auth.login(this.login)
-      console.log(res)
+      try {
+        const response = await this.$repos.auth.login(this.login)
+        console.log(response)
+        if (response.status === 'success') {
+          this.$cookies.set('selfcare_token', response.data.token)
+          this.$cookies.set('selfcare_user_id', response.data.id)
+          this.notificationMessage = response.message
+          this.showNotification = true
+          this.$router.replace({ path: 'dashboard' })
+        }
+      } catch (loginerror) {
+        this.showNotification = true
+        this.notificationType = 'error'
+        this.notificationMessage = loginerror.response.data.message
+      }
     },
   },
 }

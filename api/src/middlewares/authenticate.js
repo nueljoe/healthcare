@@ -3,13 +3,11 @@ import { AuthenticationError } from '../errors';
 import { decodeToken } from '../utils/_jwt';
 
 /**
- * Identifies the current user in the system or throws them out if they
- * can't be identified
- * @param { import('express').Request } req 
- * @param { import('express').Response } res 
- * @param { import('express').NextFunction } next 
+ * Attempts to authenticate a user.
+ * 
+ * @param { import('express').Request } req
  */
-export default async (req, res, next) => {
+const runAuthentication = async (req) => {
     const genericErrorMsg = 'Please sign in or create an account';
 
     try {
@@ -31,9 +29,47 @@ export default async (req, res, next) => {
             throw new AuthenticationError(genericErrorMsg);
         }
 
-        req.user = user;
+        return user;
+    } catch (error) {
+        if (propagate) {
+            throw error;
+        }
+    }
+}
+
+/**
+ * Identifies the current user in the system or throws them out if they
+ * can't be identified. The server with return an authentication error message
+ * if authentication fails.
+ * @param { import('express').Request } req 
+ * @param { import('express').Response } res 
+ * @param { import('express').NextFunction } next 
+ */
+const authenticate = async (req, res, next) => {
+    try {
+        req.user = await runAuthentication(req);
         next();
     } catch (error) {
         next(error);
     }
 }
+
+/**
+ * Identifies the current user in the system or throws them out if they
+ * can't be identified without throwing any errors. Authenticating in relaxed mode
+ *  will not prevent control from moving to the next middleware on a route.
+ * @param { import('express').Request } req 
+ * @param { import('express').Response } res 
+ * @param { import('express').NextFunction } next 
+ */
+authenticate.inRelaxedMode = async (req, res, next) => {
+    try {
+        req.user = await runAuthentication(req, next, { propagate: true });
+        next()
+    } catch (error) {
+        console.log('No User Was Found, But Proceed To The Next Middleware')
+        next();
+    }
+}
+
+export default authenticate;

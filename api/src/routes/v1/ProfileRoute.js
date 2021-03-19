@@ -19,6 +19,7 @@ router.get('/payments', authenticate, paginate, ProfileController.fetchPaymentHi
 router.get('/enrollments', authenticate, paginate, ProfileController.fetchCoursesEnrolled);
 router.get('/courses', authenticate, paginate, ProfileController.fetchCoursesCreated);
 router.get('/orders', authenticate, paginate, ProfileController.fetchOrders);
+router.get('/subscriptions', authenticate, paginate, ProfileController.fetchUserSubscriptions);
 
 // USER'S CART
 router.route('/cart')
