@@ -2,11 +2,6 @@
   <div
     class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-auth"
   >
-    <Notification
-      :show="showNotification"
-      :notificationType="notificationType"
-      :message="notificationMessage"
-    />
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <img
         class="mx-auto h-16 w-auto"
@@ -37,7 +32,7 @@
             <div class="mt-1">
               <selfcare-input v-model="login.email" :type="'email'">
                 <template #error>
-                  <ErrorMessage message="Email is required" />
+                  <selfcare-error-message message="Email is required" />
                 </template>
               </selfcare-input>
             </div>
@@ -53,7 +48,7 @@
                 v-bind="inputAttr"
               >
                 <template #error>
-                  <ErrorMessage message="Password is required" />
+                  <selfcare-error-message message="Password is required" />
                 </template>
               </selfcare-input>
             </div>
@@ -81,12 +76,8 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators'
-import ErrorMessage from '@/components/errorMessage/ErrorMessage'
 export default {
   layout: 'auth',
-  components: {
-    ErrorMessage,
-  },
   data() {
     const fields = [
       {
@@ -131,14 +122,13 @@ export default {
         if (response.status === 'success') {
           this.$cookies.set('selfcare_token', response.data.token)
           this.$cookies.set('selfcare_user_id', response.data.id)
-          this.notificationMessage = response.message
-          this.showNotification = true
-          this.$router.replace({ path: 'dashboard' })
+          this.$notification('success', response.message)
+          setTimeout(() => {
+            this.$router.replace({ path: 'dashboard' })
+          })
         }
       } catch (loginerror) {
-        this.showNotification = true
-        this.notificationType = 'error'
-        this.notificationMessage = loginerror.response.data.message
+        this.$notification('error', loginerror.response.data.message)
       }
     },
   },
