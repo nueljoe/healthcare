@@ -2,11 +2,6 @@
   <div
     class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-auth"
   >
-    <Notification 
-      :show="showNotification"
-      :notificationType="notificationType"
-      :message="notificationMessage"
-    />
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <img
         class="mx-auto h-16 w-auto"
@@ -15,7 +10,9 @@
       />
     </div>
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-300">
+      <div
+        class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-300"
+      >
         <div class="mb-8">
           <h2 class="mt-4 text-2xl font-bold text-gray-800">Welcome Back</h2>
           <p class="font-normal text-base text-gray-600">
@@ -33,12 +30,9 @@
           <template #email>
             <selfcare-input-label label="Email" />
             <div class="mt-1">
-              <selfcare-input 
-                v-model="login.email"
-                :type="'email'"
-              >
-                <template #error> 
-                  <ErrorMessage message="Email is required" />
+              <selfcare-input v-model="login.email" :type="'email'">
+                <template #error>
+                  <selfcare-error-message message="Email is required" />
                 </template>
               </selfcare-input>
             </div>
@@ -48,13 +42,13 @@
           <template #password="{ inputAttr }">
             <selfcare-input-label label="Password" />
             <div class="mt-1">
-              <selfcare-input 
-                v-model="login.password" 
-                :type="'password'" 
+              <selfcare-input
+                v-model="login.password"
+                :type="'password'"
                 v-bind="inputAttr"
               >
                 <template #error>
-                  <ErrorMessage message="Password is required" />
+                  <selfcare-error-message message="Password is required" />
                 </template>
               </selfcare-input>
             </div>
@@ -81,13 +75,9 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators';
-import ErrorMessage from "@/components/errorMessage/ErrorMessage"
+import { required } from 'vuelidate/lib/validators'
 export default {
   layout: 'auth',
-  components: {
-    ErrorMessage
-  },
   data() {
     const fields = [
       {
@@ -111,7 +101,7 @@ export default {
       },
       showNotification: false,
       notificationType: 'success',
-      notificationMessage: ""
+      notificationMessage: '',
     }
   },
   validations: {
@@ -129,19 +119,18 @@ export default {
       try {
         const response = await this.$repos.auth.login(this.login)
         console.log(response)
-        if(response.status === 'success') {
+        if (response.status === 'success') {
           this.$cookies.set('selfcare_token', response.data.token)
           this.$cookies.set('selfcare_user_id', response.data.id)
-          this.notificationMessage = response.message
-          this.showNotification = true
-          this.$router.replace({path: 'dashboard'})
+          this.$notification('success', response.message)
+          setTimeout(() => {
+            this.$router.replace({ path: 'dashboard' })
+          })
         }
       } catch (loginerror) {
-        this.showNotification = true
-        this.notificationType = 'error'
-        this.notificationMessage = loginerror.response.data.message
+        this.$notification('error', loginerror.response.data.message)
       }
     },
-  }
+  },
 }
 </script>
