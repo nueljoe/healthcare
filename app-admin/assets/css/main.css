@@ -1,0 +1,100 @@
+*, body, html {
+  box-sizing: border-box;
+}
+
+.overflow-visible {
+  overflow: visible !important;
+}
+
+/* input */
+.selfcare-input {
+  @apply appearance-none;
+  @apply block;
+  @apply w-full;
+  @apply px-3;
+  @apply py-2;
+  @apply border;
+  @apply border-gray-300;
+  @apply rounded-md;
+  @apply shadow-sm;
+}
+.selfcare-input__checkbox {
+  @apply h-4;
+  @apply w-4;
+  @apply text-indigo-600;
+  @apply border-gray-300;
+  @apply rounded;
+  @apply mr-1;
+}
+
+.selfcare-input:focus {
+  @apply outline-none;
+  @apply border-blue-700;
+}
+
+
+/* table */
+.table-head {
+  @apply px-6;
+  @apply py-3;
+  @apply bg-gray-100;
+  @apply text-left; 
+  @apply text-xs;
+  @apply leading-4;
+  @apply font-medium;
+  @apply text-gray-500;
+  @apply uppercase;
+  @apply tracking-wider;
+}
+.table-data {
+  @apply px-6;
+  @apply py-4;
+  @apply whitespace-no-wrap;
+  @apply text-gray-900;
+  @apply text-sm; 
+  @apply leading-5; 
+  @apply font-medium;
+}
+
+/* table pagination */
+.pagination-btn {
+  @apply relative;
+  @apply inline-flex;
+  @apply items-center;
+  @apply px-4;
+  @apply py-2;
+  @apply border;
+  @apply text-sm;
+  @apply leading-5;
+  @apply font-medium;
+  @apply rounded-md;
+  @apply text-gray-700;
+  @apply bg-white;
+  @apply transition;
+  @apply ease-in-out;
+  @apply duration-150;
+}
+
+.pagination-btn:hover {
+  @apply text-gray-500;
+}
+
+/* table */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
