@@ -17,7 +17,9 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: [
+    '@/assets/css/main.css'
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
@@ -27,6 +29,7 @@ export default {
     { src: '~/plugins/vue-croppa.js', mode: 'client' },
     { src: '~/plugins/vue-select.js', mode: 'client' },
     { src: '~/plugins/repositories.js', mode: 'client' },
+    '~plugins/vue-js-modal.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
