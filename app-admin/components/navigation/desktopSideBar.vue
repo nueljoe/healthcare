@@ -56,7 +56,7 @@
                 :to="({path: '/categories'})"
                 class="selfcare-nav__menu"
               >
-                <categories-icon :svgClass="'text-gray-400'" />
+                <categories-icon :svgClass="'text-gray-400 mr-4 h-6 w-6'" />
                 Categories
               </nuxt-link>
             </nav>
