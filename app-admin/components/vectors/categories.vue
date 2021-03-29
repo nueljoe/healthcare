@@ -1,6 +1,6 @@
 <template>
   <svg 
-    :class="`mr-4 h-6 w-6 ${svgClass} transition ease-in-out duration-150`" 
+    :class="`${svgClass} transition ease-in-out duration-150`" 
     fill="none" 
     stroke="currentColor" 
     viewBox="0 0 24 24" 
