@@ -100,23 +100,4 @@
      }
     }
   }
-
 </script>
-
-<style>
-  .croppa-container {
-    background-color: transparent;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.375rem;
-    width: 100%;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  .vs__dropdown-toggle {
-    border: 0 !important;
-    padding: 0 !important;
-  }
-  .vs__selected {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-</style>
