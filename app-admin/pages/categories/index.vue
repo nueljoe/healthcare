@@ -10,8 +10,8 @@
             </legend>
             <div class="bg-white rounded-md -space-y-px">
               <div class="relative border rounded-tl-md rounded-tr-md p-3 flex items-center bg-gray-100">
-                <!-- <div class="bg-blue-700 rounded-md p-2">
-                  <categories-icon :svgClass="'text-white h-4 w-4'" />
+                <!-- <div class="bg-gray-300 rounded-md p-2">
+                  <categories-icon :svgClass="'text-gray-500 h-4 w-4'" />
                 </div> -->
                 <p class="ml-2 text-md font-medium">Categories management</p>
               </div>
@@ -20,16 +20,16 @@
               <div 
                 class="relative border p-4 flex" 
                 :class="[activeView === 'coursesCategories' ? 'bg-blue-100 border-blue-300 z-10' : 'border-gray-200']"
-                @click="activeView = 'coursesCategories'"
+                @click="setActiveView('coursesCategoriesTable', 'course')"
               >
                 <div class="flex items-center h-5">
                   <input 
                     id="course-categories" 
-                    value="coursesCategories"
+                    value="coursesCategoriesTable"
                     v-model="activeView"
                     type="radio" 
                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 cursor-pointer border border-gray-300"
-                    :checked="activeView === 'coursesCategories'"
+                    :checked="activeView === 'coursesCategoriesTable'"
                   />
                 </div>
                 <label for="settings-option-0" class="ml-3 flex flex-col cursor-pointer">
@@ -38,7 +38,7 @@
                   </span>
                   <span 
                     class="block text-sm"
-                    :class="{'text-blue-400' : activeView === 'coursesCategories'}"
+                    :class="{'text-blue-400' : activeView === 'coursesCategoriesTable'}"
                   >
                     Click here to manage course categories
                   </span>
@@ -48,17 +48,17 @@
              <!-- product categories -->
               <div 
                 class="relative border p-4 flex rounded-bl-md rounded-br-md"  
-                @click="activeView = 'productCategories'"
-                :class="[activeView === 'productCategories' ? 'bg-blue-100 border-blue-300 z-10' : 'border-gray-200']"
+                @click="setActiveView('productCategoriesTable', 'product')"
+                :class="[activeView === 'productCategoriesTable' ? 'bg-blue-100 border-blue-300 z-10' : 'border-gray-200']"
               >
                 <div class="flex items-center h-5">
                   <input 
                     id="product-categories" 
-                    value="productCategories"
+                    value="productCategoriesTable"
                     v-model="activeView"
                     type="radio"
                     class="h-4 w-4 text-blue-600 cursor-pointer border border-gray-300"
-                    :checked="activeView === 'productCategories'"
+                    :checked="activeView === 'productCategoriesTable'"
                   />
                 </div>
 
@@ -80,32 +80,81 @@
         </div>
 
         <!-- courses and projects category table -->
-        <div class="col-span-5"> 
+        <div class="col-span-5">
+          <div class="flex justify-between mb-3 items-center">
+            <h2 class="text-lg leading-6 font-medium text-gray-900 capitalize pb-0 mb-0">{{ categoryType }} Categories</h2>
+            <span class="relative z-0 inline-flex shadow-sm rounded-md">
+              <button 
+                type="button"
+                @click="$modal.show('create-category-modal')"
+                class=" 
+                  relative inline-flex items-center px-4 py-2 border border-cool-gray-300
+                  text-sm leading-5 font-medium
+                  capitalize
+                  text-cool-gray-700
+                  bg-white hover:text-cool-gray-500
+                  focus:outline-none focus:shadow-outline-blue
+                  focus:border-blue-300
+                  active:bg-cool-gray-100 active:text-cool-gray-700
+                  transition ease-in-out duration-150
+                "
+              >
+                Create
+              </button> 
+              <button 
+                type="button" 
+                class="
+                  -ml-px relative inline-flex items-center px-4 py-2 border border-cool-gray-300 text-sm 
+                  leading-5 font-medium text-cool-gray-700 bg-white hover:text-cool-gray-500 
+                  focus:outline-none focus:shadow-outline-blue 
+                  focus:border-blue-300 active:bg-cool-gray-100 active:text-cool-gray-700 transition ease-in-out duration-150
+                "
+              >
+                Export
+              </button>
+            </span>
+          </div>
           <keep-alive>
             <transition name="fade" mode="out-in">
-              <component :is="activeView"></component>
+              <component :is="activeView" v-bind="{ categoryType: categoryType }"></component>
             </transition>
           </keep-alive>
         </div>
       </div>
     </div>
+
+    <!-- modal to create category -->
+    <categories-modal 
+      actionType="create" 
+      :categoryType="categoryType" 
+      modalName="create-category-modal"
+    />
   </div>
 </template>
 
 <script>
-  import coursesCategories from '@/components/tables/categories/categories'
-  import ProductCategories from '@/components/tables/categories/categories'
-   const CategoriesIcon = () => import('@/components/vectors/categories')
+  import coursesCategoriesTable from '@/components/tables/categories/categoriesTable';
+  import ProductCategoriesTable from '@/components/tables/categories/categoriesTable';
+  const CategoriesIcon = () => import('@/components/vectors/categories');
+  import CategoriesModal from '@/components/modals/categoriesModal';
+
   export default {
     data() {
       return {
-        activeView: 'coursesCategories'
+        activeView: 'coursesCategoriesTable',
+        categoryType: 'course'
       }
     },
     components: {
-      coursesCategories,
-      ProductCategories,
-      CategoriesIcon
+      coursesCategoriesTable,
+      ProductCategoriesTable,
+      CategoriesModal
+    },
+    methods: {
+      setActiveView(activeView, categoryType) {
+        this.activeView = activeView
+        this.categoryType = categoryType
+      }
     }
   }
 
