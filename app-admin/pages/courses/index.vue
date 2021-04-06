@@ -15,10 +15,15 @@
           <courses-table />
         </div>
 
-          <!-- add new course form -->
-          <div class="col-span-3"> 
-            <div class="shadow sm:rounded-lg overflow-hidden">
-            <div class="px-6 py-3 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider border-b border-gray-300">
+        <!-- add new course form -->
+        <div class="col-span-3"> 
+          <div class="shadow sm:rounded-lg overflow-hidden">
+            <div 
+              class="
+                px-6 py-3 bg-gray-200 text-left text-xs leading-4 font-medium 
+              text-gray-500 uppercase tracking-wider border-b border-gray-300
+              "
+            >
               Create course
             </div>
             <div class="bg-white w-full px-6 py-6">
@@ -32,7 +37,7 @@
 </template>
 
 <script>
-  import CoursesTable from '@/components/tables/courses/courses'
+  import CoursesTable from '@/components/tables/courses/coursesTable'
   import CreateCourseForm from '@/components/forms/course'
   export default {
     data() {
