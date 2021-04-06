@@ -98,3 +98,58 @@
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+
+/* vue croppa */
+.croppa-container {
+  background-color: transparent !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  width: 100%;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* vue select */
+.vs__dropdown-toggle {
+  border: 0 !important;
+  padding: 0 !important;
+}
+.vs__selected {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* button */
+.selfcare-button {
+  @apply flex;
+  @apply justify-center;
+  @apply py-2;
+  @apply px-4;
+  @apply border;
+  @apply rounded-md;
+  @apply shadow-sm;
+  @apply text-sm;
+  @apply leading-5;
+  @apply font-medium;
+  @apply transition;
+  @apply ease-in-out;
+  @apply duration-150;
+}
+.selfare-button__primary {
+  @apply text-white;
+  @apply bg-blue-700;
+}
+.selfare-button__primary:hover {
+  @apply bg-blue-700;
+}
+.selfare-button__light {
+  @apply bg-white;
+  @apply text-gray-700;
+  @apply border;
+}
+.selfare-button__light:hover {
+  @apply text-gray-900;
+   /* @apply border-blue-700; */
+}
+.selfcare-button:focus {
+  @apply outline-none;
+}
