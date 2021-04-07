@@ -109,9 +109,12 @@
 }
 
 /* vue select */
+.v-select {
+  padding: 6px !important;
+}
 .vs__dropdown-toggle {
   border: 0 !important;
-  padding: 0 !important;
+  padding: 0px !important;
 }
 .vs__selected {
   margin: 0 !important;
@@ -125,7 +128,6 @@
   @apply py-2;
   @apply px-4;
   @apply border;
-  @apply rounded-md;
   @apply shadow-sm;
   @apply text-sm;
   @apply leading-5;
