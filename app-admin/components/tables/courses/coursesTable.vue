@@ -47,9 +47,13 @@
               </td>
               <td class="table-data">
                 <div class="flex">
-                  <span class="hidden sm:block shadow-sm rounded-md"><ViewBtn /></span>
-                  <span class="hidden sm:block ml-3 shadow-sm rounded-md"><EditBtn /></span>
-                  <span class="hidden sm:block ml-3 shadow-sm rounded-md"><DeleteBtn /></span>
+                  <span class="hidden sm:block shadow-sm rounded-md"><view-btn /></span>
+                  <span class="hidden sm:block ml-3 shadow-sm rounded-md">
+                    <edit-btn @editButtonClicked="$modal.show('edit-course-modal')" />
+                  </span>
+                  <span class="hidden sm:block ml-3 shadow-sm rounded-md">
+                    <delete-btn @deleteButtonClicked="$modal.show('delete-course-modal')" />
+                  </span>
                 </div>
               </td>
             </tr>
@@ -74,6 +78,20 @@
         </nav>
       </div>
     </div>
+
+    <!-- edit course modal -->
+    <edit-course-modal 
+      modal-name="edit-course-modal"
+      action-type="edit"
+    />
+
+    <!-- delete category modal -->
+    <delete-course-modal 
+      modalName="delete-course-modal"
+      actionType="delete"
+      title="Delete Course"
+      sub-title= 'Are you sure you want to delete this course? All of your data will be permanently removed from our servers forever. This action cannot be undone.'
+    />
   </div>
 </template>
 
@@ -81,11 +99,15 @@
 import ViewBtn from '@/components/actionIcons/view'
 import EditBtn from '@/components/actionIcons/edit'
 import DeleteBtn from '@/components/actionIcons/delete'
+import DeleteCourseModal from '@/components/modals/confirmStatusModal'
+import EditCourseModal from '@/components/modals/coursesModal'
 export default {
   components: {
     ViewBtn,
     EditBtn,
-    DeleteBtn
+    DeleteBtn,
+    DeleteCourseModal,
+    EditCourseModal
   }
 }
 </script>
