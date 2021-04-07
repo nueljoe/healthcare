@@ -35,10 +35,10 @@
               <td class="table-data">
                 <div class="flex">
                   <span class="hidden sm:block ml-3 shadow-sm rounded-md">
-                    <EditBtn @editButtonClicked="$modal.show('edit-category-modal')" />
+                    <edit-btn @editButtonClicked="$modal.show('edit-category-modal')" />
                   </span>
                   <span class="hidden sm:block ml-3 shadow-sm rounded-md">
-                    <DeleteBtn @deleteButtonClicked="$modal.show('delete-category-modal')" />
+                    <delete-btn @deleteButtonClicked="$modal.show('delete-category-modal')" />
                   </span>
                 </div>
               </td>
