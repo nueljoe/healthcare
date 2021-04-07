@@ -2,7 +2,7 @@
   <button
     :type="buttonType"
     class="selfcare-button"
-    :class="buttonClass"
+    :class="[buttonClass, rounded ? 'rounded-md' : null ]"
     v-on="$listeners"
   >
     {{ buttonLabel }}
@@ -28,6 +28,10 @@ export default {
       type: String,
       default: () => 'selfare-button__primary w-full',
     },
+    rounded: {
+      type: Boolean,
+      default: () => true
+    }
   },
   methods: {
     buttonClicked() {
