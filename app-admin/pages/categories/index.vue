@@ -83,36 +83,23 @@
         <div class="col-span-5">
           <div class="flex justify-between mb-3 items-center">
             <h2 class="text-lg leading-6 font-medium text-gray-900 capitalize pb-0 mb-0">{{ categoryType }} Categories</h2>
-            <span class="relative z-0 inline-flex shadow-sm rounded-md">
-              <button 
-                type="button"
-                @click="$modal.show('create-category-modal')"
-                class=" 
-                  relative inline-flex items-center px-4 py-2 border border-cool-gray-300
-                  text-sm leading-5 font-medium
-                  capitalize
-                  text-cool-gray-700
-                  bg-white hover:text-cool-gray-500
-                  focus:outline-none focus:shadow-outline-blue
-                  focus:border-blue-300
-                  active:bg-cool-gray-100 active:text-cool-gray-700
-                  transition ease-in-out duration-150
-                "
-              >
-                Create
-              </button> 
-              <button 
-                type="button" 
-                class="
-                  -ml-px relative inline-flex items-center px-4 py-2 border border-cool-gray-300 text-sm 
-                  leading-5 font-medium text-cool-gray-700 bg-white hover:text-cool-gray-500 
-                  focus:outline-none focus:shadow-outline-blue 
-                  focus:border-blue-300 active:bg-cool-gray-100 active:text-cool-gray-700 transition ease-in-out duration-150
-                "
-              >
-                Export
-              </button>
-            </span>
+            <div class="flex justify-end mb-2">
+              <span class="relative z-0 inline-flex shadow-sm">
+                <selfcare-button 
+                  button-label="Create" 
+                  button-class="selfare-button__light"
+                  :rounded="false"
+                  @click="$modal.show('create-category-modal')"
+                />
+              </span>
+              <span class="relative z-0 inline-flex shadow-sm">
+                <selfcare-button 
+                  button-label="Export" 
+                  button-class="selfare-button__light rounded-none"
+                  :rounded="false"
+                />
+              </span>
+            </div>
           </div>
           <keep-alive>
             <transition name="fade" mode="out-in">
@@ -127,7 +114,7 @@
     <categories-modal 
       actionType="create" 
       :categoryType="categoryType" 
-      modalName="create-category-modal"
+      modal-name="create-category-modal"
     />
   </div>
 </template>
@@ -135,7 +122,7 @@
 <script>
   import coursesCategoriesTable from '@/components/tables/categories/categoriesTable';
   import ProductCategoriesTable from '@/components/tables/categories/categoriesTable';
-  const CategoriesIcon = () => import('@/components/vectors/categories');
+  // const CategoriesIcon = () => import('@/components/vectors/categories');
   import CategoriesModal from '@/components/modals/categoriesModal';
 
   export default {
