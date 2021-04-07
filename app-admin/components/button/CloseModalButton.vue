@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute" style="bottom: 90%; left: 91%;">
+  <div class="absolute" style="top: -20px; right: -10px;">
     <button 
       type="button"
       @click="$emit('closeModal')"
