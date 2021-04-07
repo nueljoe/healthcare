@@ -55,12 +55,12 @@
           {{actionType}}
         </button>
 
-        <!-- cansel button -->
+        <!-- cancel button -->
         <selfcare-button
           button-label="Cancel" 
           button-class="selfare-button__light w-auto ml-3 inline-flex px-4 py-2" 
+          @click="$modal.hide(`${modalName}`)"
         />
-          <!-- @click="$modal.hide(`${modalName}`)" -->
       </div>
     </div>
   </modal>
@@ -68,27 +68,27 @@
 
 
 <script>
-const CloseModal = () => import('@/components/button/CloseModalButton')
-export default {
-  props: {
-    actionType: {
-      type: String
+  const CloseModal = () => import('@/components/button/CloseModalButton')
+  export default {
+    props: {
+      actionType: {
+        type: String
+      },
+      modalName: {
+        type: String
+      },
+      title: {
+        type: String
+      },
+      subTitle: {
+        type: String
+      }
     },
-    modalName: {
-      type: String
-    },
-    title: {
-      type: String
-    },
-    subTitle: {
-      type: String
+    components: {
+      // CategoriesForm,
+      CloseModal
     }
-  },
-  components: {
-    // CategoriesForm,
-    CloseModal
   }
-}
 </script>
 
 <style>
