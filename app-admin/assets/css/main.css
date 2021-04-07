@@ -1,0 +1,157 @@
+*, body, html {
+  box-sizing: border-box;
+}
+
+.overflow-visible {
+  overflow: visible !important;
+}
+
+/* input */
+.selfcare-input {
+  @apply appearance-none;
+  @apply block;
+  @apply w-full;
+  @apply px-3;
+  @apply py-2;
+  @apply border;
+  @apply border-gray-300;
+  @apply rounded-md;
+  @apply shadow-sm;
+}
+.selfcare-input__checkbox {
+  @apply h-4;
+  @apply w-4;
+  @apply text-indigo-600;
+  @apply border-gray-300;
+  @apply rounded;
+  @apply mr-1;
+}
+
+.selfcare-input:focus {
+  @apply outline-none;
+  @apply border-blue-700;
+}
+
+
+/* table */
+.table-head {
+  @apply px-6;
+  @apply py-3;
+  @apply bg-gray-100;
+  @apply text-left; 
+  @apply text-xs;
+  @apply leading-4;
+  @apply font-medium;
+  @apply text-gray-500;
+  @apply uppercase;
+  @apply tracking-wider;
+}
+.table-data {
+  @apply px-6;
+  @apply py-4;
+  @apply whitespace-no-wrap;
+  @apply text-gray-900;
+  @apply text-sm; 
+  @apply leading-5; 
+  @apply font-medium;
+}
+
+/* table pagination */
+.pagination-btn {
+  @apply relative;
+  @apply inline-flex;
+  @apply items-center;
+  @apply px-4;
+  @apply py-2;
+  @apply border;
+  @apply text-sm;
+  @apply leading-5;
+  @apply font-medium;
+  @apply rounded-md;
+  @apply text-gray-700;
+  @apply bg-white;
+  @apply transition;
+  @apply ease-in-out;
+  @apply duration-150;
+}
+
+.pagination-btn:hover {
+  @apply text-gray-500;
+}
+
+/* table */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+/* vue croppa */
+.croppa-container {
+  background-color: transparent !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  width: 100%;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* vue select */
+.v-select {
+  padding: 6px !important;
+}
+.vs__dropdown-toggle {
+  border: 0 !important;
+  padding: 0px !important;
+}
+.vs__selected {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* button */
+.selfcare-button {
+  @apply flex;
+  @apply justify-center;
+  @apply py-2;
+  @apply px-4;
+  @apply border;
+  @apply shadow-sm;
+  @apply text-sm;
+  @apply leading-5;
+  @apply font-medium;
+  @apply transition;
+  @apply ease-in-out;
+  @apply duration-150;
+}
+.selfare-button__primary {
+  @apply text-white;
+  @apply bg-blue-700;
+}
+.selfare-button__primary:hover {
+  @apply bg-blue-700;
+}
+.selfare-button__light {
+  @apply bg-white;
+  @apply text-gray-700;
+  @apply border;
+}
+.selfare-button__light:hover {
+  @apply text-gray-900;
+   /* @apply border-blue-700; */
+}
+.selfcare-button:focus {
+  @apply outline-none;
+}

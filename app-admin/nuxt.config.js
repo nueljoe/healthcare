@@ -17,22 +17,26 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: [
+    '@/assets/css/main.css'
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~/plugins/vuelidate.js', mode: 'client' },
+    { src: '~/plugins/notify.js', mode: 'client' },
     { src: '~/plugins/core-components', mode: 'client' },
     { src: '~/plugins/vue-cookies.js', mode: 'client' },
     { src: '~/plugins/vue-croppa.js', mode: 'client' },
     { src: '~/plugins/vue-select.js', mode: 'client' },
     { src: '~/plugins/repositories.js', mode: 'client' },
+    '~plugins/vue-js-modal.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: [
     {
-      path: '~/components/',
+      path: '~/components',
       prefix: 'Selfcare',
     },
     {

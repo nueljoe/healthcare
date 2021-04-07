@@ -12,23 +12,25 @@
       </div>
     </div>
 
-    <!-- course category -->
-    <div class="mb-3">
-      <selfcare-input-label label="Category" />
-      <div class="mt-1 rounded-md shadow-sm">
-        <v-select class="selfcare-input" :options="['lifestyle', 'learning', 'music']"></v-select>
+    <div class="flex sm:flex-col md:flex-row">
+      <!-- course category -->
+      <div class="mb-3 flex-1 md:mr-2">
+        <selfcare-input-label label="Category" />
+        <div class="mt-1 rounded-md shadow-sm">
+          <v-select class="selfcare-input" :options="['Lifestyle', 'Learning', 'Music']"></v-select>
+        </div>
       </div>
-    </div>
 
-    <!-- course tags -->
-    <div class="mb-3">
-      <selfcare-input-label label="Tags" />
-      <div class="mt-1 rounded-md shadow-sm">
-        <input 
-          id="tags" 
-          type="text" 
-          class="selfcare-input"
-        >
+      <!-- course tags -->
+      <div class="mb-3 flex-1 md:ml-2">
+        <selfcare-input-label label="Tags" />
+        <div class="mt-1 rounded-md shadow-sm">
+          <input 
+            id="tags" 
+            type="text" 
+            class="selfcare-input"
+          >
+        </div>
       </div>
     </div>
 
@@ -44,6 +46,28 @@
       </div>
     </div>
 
+    <div class="flex sm:flex-col md:flex-row">
+      <!-- course type -->
+      <div class="mb-3 md:mr-2 flex-1">
+        <selfcare-input-label label="Type" />
+        <div class="mt-1 rounded-md shadow-sm">
+          <v-select class="selfcare-input" :options="['Free', 'Paid']"></v-select>
+        </div>
+      </div>
+
+      <!-- course price -->
+      <div class="mb-3 flex-1 md:ml-2">
+        <selfcare-input-label label="Price" />
+        <div class="mt-1 rounded-md shadow-sm">
+          <input 
+            id="price" 
+            type="text" 
+            class="selfcare-input"
+          >
+        </div>
+      </div>
+    </div>
+
     <!-- category description -->
     <div class="mb-3">
       <selfcare-input-label label="Description" />
@@ -51,7 +75,7 @@
         <textarea 
           id="description" 
           cols="1"
-          rows="5"
+          rows="4"
           class="selfcare-input"
         >
         </textarea>
@@ -65,6 +89,7 @@
         <croppa 
           v-model="croppa" 
           auto-sizing
+          :height=150
           placeholder="choose an image"
           :placeholder-font-size="14"
           accept=".png, .jpg, image/jpeg, .JPG, .PNG, .JPEG"
@@ -100,23 +125,4 @@
      }
     }
   }
-
 </script>
-
-<style>
-  .croppa-container {
-    background-color: transparent;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.375rem;
-    width: 100%;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  .vs__dropdown-toggle {
-    border: 0 !important;
-    padding: 0 !important;
-  }
-  .vs__selected {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-</style>
